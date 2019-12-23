@@ -25,10 +25,58 @@ const HomeScreen = props => {
   return (
     <View style={styles.screen}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Card title="Neurology" style={styles.inputContainer} url={img1} />
-        <Card title="this title 2" style={styles.inputContainer} url={img2} />
-        <Card title="this title 3" style={styles.inputContainer} url={img3} />
-        <Card title="this title 4" style={styles.inputContainer} url={img4} />
+        <Card
+          title="Neurology"
+          style={styles.inputContainer}
+          url={img1}
+          onSelect={() => {
+            props.navigation.navigate({
+              routeName: 'Chapters',
+              params: {
+                ChapterTitle: 'Neurology',
+              },
+            });
+          }}
+        />
+        <Card
+          title="Cardiology"
+          style={styles.inputContainer}
+          url={img2}
+          onSelect={() => {
+            props.navigation.navigate({
+              routeName: 'Chapters',
+              params: {
+                ChapterTitle: 'Cardiology',
+              },
+            });
+          }}
+        />
+        <Card
+          title="Gastroenterology"
+          style={styles.inputContainer}
+          url={img3}
+          onSelect={() => {
+            props.navigation.navigate({
+              routeName: 'Chapters',
+              params: {
+                ChapterTitle: 'Gastroenterology',
+              },
+            });
+          }}
+        />
+        <Card
+          title="Microbiology"
+          style={styles.inputContainer}
+          url={img4}
+          onSelect={() => {
+            props.navigation.navigate({
+              routeName: 'Chapters',
+              params: {
+                ChapterTitle: 'Microbiology',
+              },
+            });
+          }}
+        />
       </ScrollView>
     </View>
   );

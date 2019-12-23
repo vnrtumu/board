@@ -2,8 +2,9 @@ import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 
 import CardOptions from '../components/CardOptions';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const ProfileScreen = () => {
+const ProfileScreen = props => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.prrileContainer}>
@@ -33,6 +34,12 @@ const ProfileScreen = () => {
           title="Settings"
           icon="player-settings"
           style={styles.cardOptions}
+        />
+        <CardOptions
+          title="FeedBack"
+          icon="surgical-knife"
+          style={styles.cardOptions}
+          onSelect={() => props.navigation.navigate({routeName: 'FeedBack'})}
         />
       </View>
     </View>

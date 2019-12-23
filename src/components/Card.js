@@ -1,16 +1,26 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableNativeFeedback,
+} from 'react-native';
 
 const Card = props => {
   return (
-    <View style={{...styles.card, ...props.style}}>
-      <Image
-        source={props.url}
-        style={{...styles.imageStyle, ...props.style}}
-      />
-      <View style={styles.cardViewTextStyle}>
-        <Text style={styles.cardTextStyle}> {props.title} </Text>
-      </View>
+    <View>
+      <TouchableNativeFeedback onPress={props.onSelect} style={{flex: 1}}>
+        <View style={{...styles.card, ...props.style}}>
+          <Image
+            source={props.url}
+            style={{...styles.imageStyle, ...props.style}}
+          />
+          <View style={styles.cardViewTextStyle}>
+            <Text style={styles.cardTextStyle}> {props.title} </Text>
+          </View>
+        </View>
+      </TouchableNativeFeedback>
     </View>
   );
 };

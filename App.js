@@ -4,7 +4,8 @@ import {StyleSheet, View, Text, Platform} from 'react-native';
 
 import AppIntroSlider from 'react-native-app-intro-slider';
 
-import BoardNavigator from './src/navigator/BoardNavigator';
+
+import AuthNavigator from './src/navigator/AuthNav';
 
 export default class App extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ export default class App extends Component {
   };
   render() {
     if (this.state.show_Main_App) {
-      return <BoardNavigator />;
+      return <AuthNavigator />;
     } else {
       return (
         <AppIntroSlider

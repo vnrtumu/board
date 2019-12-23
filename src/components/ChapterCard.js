@@ -1,18 +1,10 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableNativeFeedback} from 'react-native';
 
-import Icon from 'react-native-vector-icons/Fontisto';
-
-const CardOptions = props => {
+const ChapterCard = props => {
   return (
     <TouchableNativeFeedback onPress={props.onSelect}>
       <View style={{...styles.card, ...props.style}}>
-        <Icon
-          name={props.icon}
-          size={30}
-          color="#900c3f"
-          style={styles.iconStyle}
-        />
         <Text style={styles.cardTextStyle}> {props.title} </Text>
       </View>
     </TouchableNativeFeedback>
@@ -34,10 +26,9 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 22,
     fontWeight: '500',
-  },
-  iconStyle: {
-    marginHorizontal: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
   },
 });
 
-export default CardOptions;
+export default ChapterCard;
