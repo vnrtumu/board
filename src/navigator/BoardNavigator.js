@@ -6,9 +6,6 @@ import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ChaptersScreen from '../screens/ChaptersScreen';
 import PointersScreen from '../screens/PointersScreen';
@@ -18,6 +15,7 @@ import LowPriority from '../screens/topTabs/LowProirity';
 import HighPriority from '../screens/topTabs/HighPriority';
 import MediumPriority from '../screens/topTabs/MediumPriority';
 import FeedBackScreen from '../screens/FeedBackScreen';
+import ChangePassword from '../screens/ChangePassword';
 
 const BoardNavigator = createStackNavigator(
   {
@@ -75,6 +73,20 @@ const BoardNavigator = createStackNavigator(
         headerTintColor: 'black',
       },
     },
+    Change: {
+      screen: ChangePassword,
+      navigationOptions: {
+        headerTitle: 'Change Password',
+        headerTitleStyle: {
+          textAlign: 'center',
+          flex: 1,
+        },
+        headerStyle: {
+          backgroundColor: 'white',
+        },
+        headerTintColor: 'black',
+      },
+    },
   },
   // {
   //   defaultNavigationOptions: {
@@ -122,7 +134,7 @@ const tabScreenConfig = {
       tabBarIcon: ({tintColor}) => {
         return <Icon name="bookmark" size={24} style={{color: '#fff'}} />;
       },
-      tabBarColor: '#969ACA',
+      tabBarColor: '#0ED8CF',
       tabBarLabel: 'Bookmarks',
     },
   },

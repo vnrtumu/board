@@ -97,6 +97,9 @@ export default class ProfileScreen extends Component {
             title="Change Password"
             icon="gear"
             style={styles.cardOptions}
+            onSelect={() =>
+              this.props.navigation.navigate({routeName: 'Change'})
+            }
           />
           <CardOptions
             title="FeedBack"

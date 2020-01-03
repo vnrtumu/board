@@ -11,7 +11,8 @@ import Modal from 'react-native-modal';
 import {Checkbox} from 'react-native-paper';
 
 import {POINTERS} from '../data/dummy';
-
+import Pointers from '../components/Pointers';
+import {RadioButton} from 'react-native-paper';
 export default class PointersScreen extends Component {
   state = {
     isModalVisible: false,
@@ -27,7 +28,7 @@ export default class PointersScreen extends Component {
     return (
       <TouchableOpacity onPress={this.toggleModal} swipeDirection={'left'}>
         <View style={styles.pointerStyle}>
-          <Text>{itemData.item.description}</Text>
+          <Pointers description={itemData.item.description} />
         </View>
       </TouchableOpacity>
     );
@@ -37,6 +38,7 @@ export default class PointersScreen extends Component {
     return (
       <View style={styles.mainContainer}>
         <FlatList
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => item.id}
           data={POINTERS}
           renderItem={this.rederGridItem}
@@ -45,40 +47,42 @@ export default class PointersScreen extends Component {
           <View style={styles.modelMainContainer}>
             <View style={styles.dummyContainer} />
             <View style={styles.modelContainer}>
-              <Text style={styles.bokkmarkTitle}>Bookmark This Pointer</Text>
               <View style={styles.prioprityContainer}>
                 <Text style={styles.highPriorityText}>High Priority</Text>
-                <Checkbox
-                  status={this.checked1 ? 'checked' : 'unchecked'}
+                <RadioButton
+                  value="first"
+                  status={checked === 'first' ? 'checked' : 'unchecked'}
                   onPress={() => {
-                    this.setState({checked1: !this.checked1});
+                    this.setState({checked: 'first'});
                   }}
                 />
               </View>
               <View style={styles.prioprityContainer}>
                 <Text style={styles.mediumPriorityText}>Medium Priority</Text>
-                <Checkbox
-                  status={checked ? 'checked' : 'unchecked'}
+                <RadioButton
+                  value="second"
+                  status={checked === 'second' ? 'checked' : 'unchecked'}
                   onPress={() => {
-                    this.setState({checked: !checked});
+                    this.setState({checked: 'second'});
                   }}
                 />
               </View>
               <View style={styles.prioprityContainer}>
                 <Text style={styles.lowPriorityText}>Low Priority</Text>
-                <Checkbox
-                  status={checked ? 'checked' : 'unchecked'}
+                <RadioButton
+                  value="third"
+                  status={checked === 'third' ? 'checked' : 'unchecked'}
                   onPress={() => {
-                    this.setState({checked: !checked});
+                    this.setState({checked: 'third'});
                   }}
                 />
               </View>
               <View style={styles.closeBtnContainer}>
-                <Button
-                  title="Close"
+                <TouchableOpacity
                   onPress={this.toggleModal}
-                  style={styles.closeBtn}
-                />
+                  style={styles.closeBtn}>
+                  <Text style={styles.closeTxt}>Close</Text>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.dummyContainer} />
@@ -107,19 +111,17 @@ const styles = StyleSheet.create({
   },
   pointerStyle: {
     flex: 1,
-    margin: 10,
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
     padding: 10,
   },
   dummyContainer: {
     flex: 1,
   },
   modelContainer: {
-    height: 100,
+    height: 10,
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 10,
+    padding: 22,
     borderRadius: 25,
   },
   bokkmarkTitle: {
@@ -146,6 +148,21 @@ const styles = StyleSheet.create({
     color: '#008000',
   },
   closeBtnContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+    borderRadius: 50,
+    width: 100,
+    marginVertical: 25,
+    marginHorizontal: '35%',
+    paddingVertical: 6,
+  },
+  closeBtn: {
     alignItems: 'center',
+  },
+  closeTxt: {
+    color: 'white',
+    fontSize: 25,
+    alignSelf: 'center',
+    textAlign: 'center',
   },
 });
