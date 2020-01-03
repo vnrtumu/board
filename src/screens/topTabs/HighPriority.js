@@ -5,6 +5,7 @@ import {
   CollapseHeader,
   CollapseBody,
 } from 'accordion-collapse-react-native';
+
 import {Thumbnail, List, ListItem, Separator} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Container, Header, Left, Body, Right, Title} from 'native-base';
@@ -40,7 +41,6 @@ export default class HighPriority extends Component {
               </ListItem>
             </CollapseBody>
           </Collapse>
-
           <Collapse style={{marginLeft: 20, marginRight: 20}}>
             <CollapseHeader style={{height: 40}}>
               <Separator bordered style={styles.SeparatorStyle}>

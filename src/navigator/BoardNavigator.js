@@ -1,10 +1,8 @@
 import React from 'react';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import {
-  createBottomTabNavigator,
-  createMaterialTopTabNavigator,
-} from 'react-navigation-tabs';
+import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
+import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -20,21 +18,6 @@ import LowPriority from '../screens/topTabs/LowProirity';
 import HighPriority from '../screens/topTabs/HighPriority';
 import MediumPriority from '../screens/topTabs/MediumPriority';
 import FeedBackScreen from '../screens/FeedBackScreen';
-
-const AuthNavigator = createStackNavigator({
-  Login: {
-    screen: LoginScreen,
-    navigationOptions: {
-      header: null,
-    },
-  },
-  Register: {
-    screen: RegisterScreen,
-    navigationOptions: {
-      header: null,
-    },
-  },
-});
 
 const BoardNavigator = createStackNavigator(
   {
@@ -120,49 +103,48 @@ const topNav = createMaterialTopTabNavigator(
   },
 );
 
-const BoardTabNavigator = createBottomTabNavigator(
-  {
-    Departments: {
-      screen: BoardNavigator,
-      navigationOptions: {
-        tabBarLabel: 'Deparments',
-        tabBarIcon: ({tintColor}) => (
-          <Fontisto name="nav-icon-grid" size={26} style={{color: tintColor}} />
-        ),
+const tabScreenConfig = {
+  Departments: {
+    screen: BoardNavigator,
+    navigationOptions: {
+      tabBarIcon: tabInfo => {
+        return (
+          <Fontisto name="nav-icon-grid" size={24} style={{color: '#fff'}} />
+        );
       },
-    },
-    BookMarks: {
-      screen: topNav,
-      navigationOptions: {
-        tabBarLabel: 'Bookmarks',
-        tabBarIcon: ({tintColor}) => (
-          <Icon name="bookmark" size={26} style={{color: tintColor}} />
-        ),
-      },
-    },
-    Profile: {
-      screen: ProfileScreen,
-      navigationOptions: {
-        tabBarLabel: 'Profile',
-        tabBarIcon: ({tintColor}) => (
-          <Icon name="user" size={24} style={{color: tintColor}} />
-        ),
-      },
+      tabBarColor: '#000',
+      tabBarLabel: 'Departments',
     },
   },
-  {
-    tabBarOptions: {
-      activeTintColor: '#900c3f',
-      labelStyle: {
-        fontSize: 12,
-        margin: 0,
-        padding: 0,
+  BookMarks: {
+    screen: topNav,
+    navigationOptions: {
+      tabBarIcon: ({tintColor}) => {
+        return <Icon name="bookmark" size={24} style={{color: '#fff'}} />;
       },
-      tabStyle: {
-        marginTop: 10,
-      },
+      tabBarColor: '#969ACA',
+      tabBarLabel: 'Bookmarks',
     },
   },
-);
+  Profile: {
+    screen: ProfileScreen,
+    navigationOptions: {
+      tabBarLabel: 'Profile',
+      tabBarIcon: ({tintColor}) => {
+        return <Icon name="user" size={24} style={{color: '#fff'}} />;
+      },
+      tabBarColor: '#900C3F',
+    },
+  },
+};
+
+const BoardTabNavigator = createMaterialBottomTabNavigator(tabScreenConfig, {
+  activeTintColor: 'white',
+  inactiveColor: '#3e2465',
+  shifting: true,
+  barStyle: {
+    backgroundColor: '#008000',
+  },
+});
 
 export default createAppContainer(BoardTabNavigator);

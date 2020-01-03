@@ -1,50 +1,124 @@
-import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import React, {Component} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
 import CardOptions from '../components/CardOptions';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/Fontisto';
+import ImagePicker from 'react-native-image-picker';
 
-const ProfileScreen = props => {
-  return (
-    <View style={styles.mainContainer}>
-      <View style={styles.prrileContainer}>
-        <View style={styles.photoContainer}>
-          <Image
-            source={require('../assets/images/profile.jpg')}
-            style={styles.profileImg}
+export default class ProfileScreen extends Component {
+  state = {
+    ImageSource: null,
+  };
+
+  selectPhotoTapped() {
+    const options = {
+      quality: 1.0,
+      maxWidth: 500,
+      maxHeight: 500,
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = {uri: response.uri};
+
+        // You can also display the image using data:
+        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+        this.setState({
+          ImageSource: source,
+        });
+      }
+    });
+  }
+
+  render() {
+    return (
+      <ScrollView
+        style={styles.mainContainer}
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.prrileContainer}>
+          <View style={styles.photoContainer}>
+            {this.state.ImageSource === null ? (
+              <Image
+                source={require('../assets/images/profile.jpg')}
+                style={styles.profileImg}
+              />
+            ) : (
+              <Image
+                style={styles.profileImg}
+                source={this.state.ImageSource}
+              />
+            )}
+            <View style={styles.uploadIconContainer}>
+              <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+                <Icon
+                  name="camera"
+                  size={25}
+                  color="#900c3f"
+                  style={styles.uploadIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.nameContainer}>
+            <Text style={styles.textStyle}>Venkat Reddy</Text>
+            <Text style={styles.locationTextStyle}>Btm Layout, Banglore</Text>
+          </View>
+        </View>
+        <View style={styles.settingsContainer}>
+          <CardOptions
+            title="vnr.tumu@gmail.com"
+            icon="envelope"
+            style={styles.cardOptions}
+          />
+          <CardOptions
+            title="+91 8790010929"
+            icon="phone"
+            style={styles.cardOptions}
+          />
+          <CardOptions
+            title="Change Password"
+            icon="gear"
+            style={styles.cardOptions}
+          />
+          <CardOptions
+            title="FeedBack"
+            icon="feed"
+            style={styles.cardOptions}
+            onSelect={() =>
+              this.props.navigation.navigate({routeName: 'FeedBack'})
+            }
+          />
+          <CardOptions
+            title="Log Out"
+            icon="sign-out"
+            style={styles.cardOptions}
+            onSelect={() =>
+              this.props.navigation.navigate({routeName: 'Login'})
+            }
           />
         </View>
-        <View style={styles.nameContainer}>
-          <Text style={styles.textStyle}>Venkat Reddy</Text>
-          <Text style={styles.locationTextStyle}>Btm Layout, Banglore</Text>
-        </View>
-      </View>
-      <View style={styles.settingsContainer}>
-        <CardOptions
-          title="vnr.tumu@gmail.com"
-          icon="email"
-          style={styles.cardOptions}
-        />
-        <CardOptions
-          title="+91 8790010929"
-          icon="phone"
-          style={styles.cardOptions}
-        />
-        <CardOptions
-          title="Settings"
-          icon="player-settings"
-          style={styles.cardOptions}
-        />
-        <CardOptions
-          title="FeedBack"
-          icon="surgical-knife"
-          style={styles.cardOptions}
-          onSelect={() => props.navigation.navigate({routeName: 'FeedBack'})}
-        />
-      </View>
-    </View>
-  );
-};
+      </ScrollView>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -72,11 +146,25 @@ const styles = StyleSheet.create({
     height: 120,
     width: 120,
     borderRadius: 60,
+    position: 'absolute',
   },
   nameContainer: {
     marginTop: 175,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
+    alignSelf: 'center',
+  },
+  uploadIconContainer: {
+    marginTop: 90,
+    marginLeft: 90,
+    height: 40,
+    width: 40,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  uploadIcon: {
+    color: 'black',
     alignSelf: 'center',
   },
   textStyle: {
@@ -101,5 +189,3 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
-
-export default ProfileScreen;
