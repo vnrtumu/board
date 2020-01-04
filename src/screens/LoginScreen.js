@@ -6,6 +6,7 @@ import {
   ImageBackground,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -17,64 +18,70 @@ const LoginScreen = props => {
       <ImageBackground
         source={require('../assets/images/bg4.png')}
         style={styles.bgStyle}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../assets/images/logo2.png')}
-            style={styles.logoStyle}
-          />
-        </View>
-        <View>
-          <View style={styles.formContainer}>
-            <Text style={styles.formText}>Welcome Back,</Text>
-            <Text style={styles.formTitle}> Login</Text>
+        <ScrollView>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../assets/images/logo2.png')}
+              style={styles.logoStyle}
+            />
           </View>
-          <View style={styles.inputContainer}>
-            <Fumi
-              label={'Email Address'}
-              iconClass={FontAwesomeIcon}
-              iconName={'envelope'}
-              iconColor={'#f95a25'}
-              iconSize={20}
-              iconWidth={40}
-              inputPadding={16}
-              autoCapitalize="none"
-              autoCorrect={false}
-              returnKeyType={'next'}
-              style={styles.emailInput}
-            />
-            <Fumi
-              label={'Password'}
-              iconClass={FontAwesomeIcon}
-              iconName={'eye'}
-              iconColor={'#f95a25'}
-              iconSize={20}
-              iconWidth={40}
-              inputPadding={16}
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry
-              style={styles.passwordInput}
-            />
-            <View style={styles.btnContiners}>
-              <TouchableOpacity style={styles.forgotPass}>
-                <Text style={styles.forgotPassText}>Forgot Password?</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.submitBtn}
-                onPress={() => props.navigation.navigate({routeName: 'Home'})}>
-                <Text style={styles.loginText}>Login</Text>
-              </TouchableOpacity>
+          <View>
+            <View style={styles.formContainer}>
+              <Text style={styles.formText}>Welcome Back,</Text>
+              <Text style={styles.formTitle}> Login</Text>
+            </View>
+            <View style={styles.inputContainer}>
+              <Fumi
+                label={'Email Address'}
+                iconClass={FontAwesomeIcon}
+                iconName={'envelope'}
+                iconColor={'#f95a25'}
+                iconSize={20}
+                iconWidth={40}
+                inputPadding={16}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType={'next'}
+                style={styles.emailInput}
+              />
+              <Fumi
+                label={'Password'}
+                iconClass={FontAwesomeIcon}
+                iconName={'eye'}
+                iconColor={'#f95a25'}
+                iconSize={20}
+                iconWidth={40}
+                inputPadding={16}
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry
+                style={styles.passwordInput}
+              />
+              <View style={styles.btnContiners}>
+                <TouchableOpacity style={styles.forgotPass}>
+                  <Text style={styles.forgotPassText}>Forgot Password?</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.submitBtn}
+                  onPress={() =>
+                    props.navigation.navigate({routeName: 'Home'})
+                  }>
+                  <Text style={styles.loginText}>Login</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.bottmText}>
-          <Text style={styles.btmTxt}>Do not Have An account ?</Text>
-          <TouchableOpacity
-            style={styles.signUpButton}
-            onPress={() => props.navigation.navigate({routeName: 'Register'})}>
-            <Text style={styles.signupTxt}> Sign Up</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.bottmText}>
+            <Text style={styles.btmTxt}>Do not Have An account ?</Text>
+            <TouchableOpacity
+              style={styles.signUpButton}
+              onPress={() =>
+                props.navigation.navigate({routeName: 'Register'})
+              }>
+              <Text style={styles.signupTxt}> Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </ImageBackground>
     </View>
   );

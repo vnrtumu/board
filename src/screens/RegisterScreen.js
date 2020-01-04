@@ -15,10 +15,10 @@ import {Fumi} from 'react-native-textinput-effects';
 const RegisterScreen = props => {
   return (
     <View style={styles.mainContainer}>
-      <ScrollView>
-        <ImageBackground
-          source={require('../assets/images/bg4.png')}
-          style={styles.bgStyle}>
+      <ImageBackground
+        source={require('../assets/images/bg4.png')}
+        style={styles.bgStyle}>
+        <ScrollView>
           <View style={styles.logoContainer}>
             <Image
               source={require('../assets/images/logo2.png')}
@@ -88,8 +88,8 @@ const RegisterScreen = props => {
               <Text style={styles.signupTxt}> Login</Text>
             </TouchableOpacity>
           </View>
-        </ImageBackground>
-      </ScrollView>
+        </ScrollView>
+      </ImageBackground>
     </View>
   );
 };
