@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  AsyncStorage,
+  Alert,
 } from 'react-native';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -12,52 +14,102 @@ import {Fumi} from 'react-native-textinput-effects';
 
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 
-const FeedBackScreen = props => {
-  return (
-    <View style={styles.mainContainer}>
-      <ScrollView>
-        <View style={styles.feedbackContainer}>
-          <Text style={styles.headingTitle}>How You Feel About the App</Text>
-        </View>
-        <View style={styles.inputContainer}>
-          <Fumi
-            label={'Email Address'}
-            iconClass={FontAwesomeIcon}
-            iconName={'envelope'}
-            iconColor={'#f95a25'}
-            iconSize={20}
-            iconWidth={40}
-            inputPadding={16}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType={'next'}
-            style={styles.emailInput}
-          />
-          <Fumi
-            label={'Subject'}
-            iconClass={FontAwesomeIcon}
-            iconName={'text-width'}
-            iconColor={'#f95a25'}
-            iconSize={20}
-            iconWidth={40}
-            inputPadding={16}
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={styles.subjectInput}
-          />
-          <AutoGrowingTextInput
-            style={styles.textInput}
-            placeholder={'Your Message'}
-            minHeight={40}
-          />
-          <TouchableOpacity style={styles.febButton}>
-            <Text style={styles.febButtonText}>Submit</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
-  );
-};
+class FeedBackScreen extends Component {
+  state = {
+    email: '',
+    subject: '',
+    message: '',
+  };
+
+  onChangeText = (key, val) => {
+    this.setState({[key]: val});
+  };
+
+  SUbmitFeedBack = async () => {
+    const {email} = this.state;
+    const {subject} = this.state;
+    const {message} = this.state;
+    // console.log(this.state);
+    AsyncStorage.getItem('output').then(output => {
+      if (output) {
+        const out = JSON.parse(output);
+        const token = out.token;
+        fetch('http://www.boardpointers.ml/api/feedback', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+          body: JSON.stringify({
+            email: email,
+            subject: subject,
+            message: message,
+          }),
+        })
+          .then(response => response.json())
+          .then(responseJson => {
+            console.log(responseJson);
+            Alert.alert('Your feedBack Submitted Successfully');
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+    });
+  };
+  render() {
+    return (
+      <View style={styles.mainContainer}>
+        <ScrollView>
+          <View style={styles.feedbackContainer}>
+            <Text style={styles.headingTitle}>How You Feel About the App</Text>
+          </View>
+          <View style={styles.inputContainer}>
+            <Fumi
+              label={'Email Address'}
+              iconClass={FontAwesomeIcon}
+              iconName={'envelope'}
+              iconColor={'#f95a25'}
+              iconSize={20}
+              iconWidth={40}
+              inputPadding={16}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType={'next'}
+              style={styles.emailInput}
+              onChangeText={val => this.onChangeText('email', val)}
+            />
+            <Fumi
+              label={'Subject'}
+              iconClass={FontAwesomeIcon}
+              iconName={'text-width'}
+              iconColor={'#f95a25'}
+              iconSize={20}
+              iconWidth={40}
+              inputPadding={16}
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={styles.subjectInput}
+              onChangeText={val => this.onChangeText('subject', val)}
+            />
+            <AutoGrowingTextInput
+              style={styles.textInput}
+              placeholder={'Your Message'}
+              minHeight={40}
+              onChangeText={val => this.onChangeText('message', val)}
+            />
+            <TouchableOpacity
+              style={styles.febButton}
+              onPress={this.SUbmitFeedBack}>
+              <Text style={styles.febButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

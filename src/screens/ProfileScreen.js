@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  AsyncStorage,
 } from 'react-native';
 
 import CardOptions from '../components/CardOptions';
@@ -14,8 +15,41 @@ import ImagePicker from 'react-native-image-picker';
 
 export default class ProfileScreen extends Component {
   state = {
+    email: '',
+    name: '',
     ImageSource: null,
   };
+
+  componentDidMount() {
+    AsyncStorage.getItem('output').then(output => {
+      if (output) {
+        const out = JSON.parse(output);
+        const token = out.token;
+        console.log(token);
+        fetch('http://www.boardpointers.ml/api/profileDisplay', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+        })
+          .then(response => response.json())
+          .then(response => {
+            this.setState({
+              email: response.success.email,
+              name: response.success.name,
+              ImageSource: {
+                uri: response.success.path + response.success.profile,
+              },
+            });
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    });
+  }
 
   selectPhotoTapped() {
     const options = {
@@ -27,22 +61,46 @@ export default class ProfileScreen extends Component {
       },
     };
 
-    ImagePicker.showImagePicker(options, response => {
-      console.log('Response = ', response);
+    ImagePicker.showImagePicker(options, imgResponse => {
+      console.log('Response = ', imgResponse);
 
-      if (response.didCancel) {
+      if (imgResponse.didCancel) {
         console.log('User cancelled photo picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+      } else if (imgResponse.error) {
+        console.log('ImagePicker Error: ', imgResponse.error);
+      } else if (imgResponse.customButton) {
+        console.log('User tapped custom button: ', imgResponse.customButton);
       } else {
-        let source = {uri: response.uri};
+        let source = {uri: imgResponse.uri};
 
         // You can also display the image using data:
         // let source = { uri: 'data:image/jpeg;base64,' + response.data };
         this.setState({
           ImageSource: source,
+        });
+        AsyncStorage.getItem('output').then(output => {
+          if (output) {
+            const out = JSON.parse(output);
+            const token = out.token;
+            fetch('http://www.boardpointers.ml/api/profileSave', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token,
+              },
+              body: JSON.stringify({
+                profile: imgResponse.data,
+              }),
+            })
+              .then(response => response.json())
+              .then(responseJson => {
+                console.log(responseJson);
+              })
+              .catch(error => {
+                console.error(error);
+              });
+          }
         });
       }
     });
@@ -78,19 +136,13 @@ export default class ProfileScreen extends Component {
             </View>
           </View>
           <View style={styles.nameContainer}>
-            <Text style={styles.textStyle}>Venkat Reddy</Text>
-            <Text style={styles.locationTextStyle}>Btm Layout, Banglore</Text>
+            <Text style={styles.textStyle}>{this.state.name}</Text>
           </View>
         </View>
         <View style={styles.settingsContainer}>
           <CardOptions
-            title="vnr.tumu@gmail.com"
+            title={this.state.email}
             icon="envelope"
-            style={styles.cardOptions}
-          />
-          <CardOptions
-            title="+91 8790010929"
-            icon="phone"
             style={styles.cardOptions}
           />
           <CardOptions

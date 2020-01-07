@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import HTML from 'react-native-render-html';
 
 const BookMark = props => {
   return (
@@ -7,10 +8,12 @@ const BookMark = props => {
       <Text style={{...styles.cardTextStyle, color: props.colorCode}}>
         {props.title}
       </Text>
-      <Text style={styles.chapterStyle}> This Cahpters 1</Text>
-      <Text style={styles.pointerStyle}>
-        simply dummy text of the printing and typesetting industry. Lorem Ipsum
-      </Text>
+      <Text style={styles.chapterStyle}> {props.chapter_title} </Text>
+      {/* <Text style={styles.pointerStyle}>{props.pointer}</Text> */}
+      <HTML
+        html={props.pointer}
+        imagesMaxWidth={Dimensions.get('window').width}
+      />
     </View>
   );
 };
@@ -24,27 +27,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     elevation: 10,
+    padding: 15,
   },
   cardTextStyle: {
     color: 'red',
     fontSize: 22,
     fontWeight: '500',
-    paddingTop: 15,
-    paddingHorizontal: 10,
   },
   chapterStyle: {
     color: 'black',
     fontSize: 18,
     fontWeight: '500',
     paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  pointerStyle: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
-    paddingHorizontal: 10,
-    paddingBottom: 10,
   },
 });
 

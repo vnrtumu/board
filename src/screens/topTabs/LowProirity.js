@@ -1,29 +1,62 @@
-import React from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, AsyncStorage} from 'react-native';
 
 import BookMark from '../../components/BookMark';
 
-const ChaptersScreen = props => {
-  return (
-    <View style={styles.mainContainer}>
-      <BookMark
-        title="Second Chapter"
-        style={styles.chapterCardtext}
-        colorCode="green"
-      />
-      <BookMark
-        title="Second Chapter"
-        style={styles.chapterCardtext}
-        colorCode="green"
-      />
-      <BookMark
-        title="Second Chapter"
-        style={styles.chapterCardtext}
-        colorCode="green"
-      />
-    </View>
-  );
-};
+class LowPriority extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: [],
+    };
+  }
+  componentDidMount() {
+    AsyncStorage.getItem('output').then(output => {
+      if (output) {
+        const out = JSON.parse(output);
+        const token = out.token;
+        const user_id = out.user_id;
+        fetch('http://www.boardpointers.ml/api/getBookmarks', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+          body: JSON.stringify({
+            priority_id: 2,
+            user_id: user_id,
+          }),
+        })
+          .then(response => response.json())
+          .then(response => {
+            this.setState({
+              dataSource: [...response.success],
+            });
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    });
+  }
+  render() {
+    const {dataSource} = this.state;
+    return (
+      <View style={styles.mainContainer}>
+        {dataSource.map((data, i) => (
+          <BookMark
+            title={data.department_name}
+            chapter_title={data.chapter_title}
+            pointer={data.pointers}
+            style={styles.chapterCardtext}
+            colorCode={data.color}
+          />
+        ))}
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -35,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChaptersScreen;
+export default LowPriority;

@@ -1,86 +1,72 @@
-import React from 'react';
-import {View, Text, StyleSheet, TextInput, Button, Image} from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, AsyncStorage} from 'react-native';
 
 import Card from '../components/Card';
 import {ScrollView} from 'react-native-gesture-handler';
 
-let img1 = {
-  uri:
-    'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=889&q=80',
-};
-let img2 = {
-  uri:
-    'https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80',
-};
-let img3 = {
-  uri:
-    'https://images.unsplash.com/photo-1571772996211-2f02c9727629?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
-};
-let img4 = {
-  uri:
-    'https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80',
-};
+class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: [],
+    };
+  }
+  componentDidMount() {
+    AsyncStorage.getItem('output').then(output => {
+      if (output) {
+        const out = JSON.parse(output);
+        const token = out.token;
+        console.log(token);
+        fetch('http://www.boardpointers.ml/api/departments', {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+        })
+          .then(response => response.json())
+          .then(response => {
+            // console.log(response.success);
+            // // AsyncStorage.setItem('department_id', response.success.id);
+            this.setState({
+              dataSource: [...response.success],
+            });
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    });
+  }
 
-const HomeScreen = props => {
-  return (
-    <View style={styles.screen}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Card
-          title="Neurology"
-          style={styles.inputContainer}
-          url={img1}
-          onSelect={() => {
-            props.navigation.navigate({
-              routeName: 'Chapters',
-              params: {
-                ChapterTitle: 'Neurology',
-              },
-            });
-          }}
-        />
-        <Card
-          title="Cardiology"
-          style={styles.inputContainer}
-          url={img2}
-          onSelect={() => {
-            props.navigation.navigate({
-              routeName: 'Chapters',
-              params: {
-                ChapterTitle: 'Cardiology',
-              },
-            });
-          }}
-        />
-        <Card
-          title="Gastroenterology"
-          style={styles.inputContainer}
-          url={img3}
-          onSelect={() => {
-            props.navigation.navigate({
-              routeName: 'Chapters',
-              params: {
-                ChapterTitle: 'Gastroenterology',
-              },
-            });
-          }}
-        />
-        <Card
-          title="Microbiology"
-          style={styles.inputContainer}
-          url={img4}
-          onSelect={() => {
-            props.navigation.navigate({
-              routeName: 'Chapters',
-              params: {
-                ChapterTitle: 'Microbiology',
-              },
-            });
-          }}
-        />
-      </ScrollView>
-    </View>
-  );
-};
+  render() {
+    const {dataSource} = this.state;
+    return (
+      <View style={styles.screen}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {dataSource.map((data, i) => (
+            <Card
+              key={i}
+              title={data.name}
+              style={styles.inputContainer}
+              url={{uri: data.path + data.icon}}
+              onSelect={() => {
+                this.props.navigation.navigate({
+                  routeName: 'Chapters',
+                  params: {
+                    ChapterTitle: `${data.name}`,
+                    department_id: `${data.id}`,
+                  },
+                });
+              }}
+            />
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   screen: {
@@ -93,7 +79,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   inputContainer: {
-    // opacity: 0.8,
     marginVertical: 10,
     width: 350,
     maxWidth: '100%',

@@ -1,10 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
+import HTML from 'react-native-render-html';
 
 const Pointers = props => {
   return (
     <View style={{...styles.card, ...props.style}}>
-      <Text style={styles.cardTextStyle}> {props.description} </Text>
+      <HTML
+        html={props.description}
+        imagesMaxWidth={Dimensions.get('window').width}
+      />
     </View>
   );
 };
@@ -19,6 +23,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 10,
     flexDirection: 'row',
+    padding: 8,
+    marginHorizontal: 5,
   },
   cardTextStyle: {
     color: 'black',

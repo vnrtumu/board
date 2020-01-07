@@ -1,91 +1,131 @@
 import React, {Component} from 'react';
 import {
-  Button,
   Text,
   View,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
+  AsyncStorage,
+  ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import {Checkbox} from 'react-native-paper';
 
-import {POINTERS} from '../data/dummy';
+// import {POINTERS} from '../data/dummy';
 import Pointers from '../components/Pointers';
 import {RadioButton} from 'react-native-paper';
 export default class PointersScreen extends Component {
-  state = {
-    isModalVisible: false,
-    checked1: false,
-    checked2: false,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: [],
+      checkbox: [],
+      isModalVisible: false,
+      checked1: false,
+      checked2: false,
+    };
+  }
 
+  componentDidMount() {
+    const department_id = this.props.navigation.getParam('department_id');
+    const chapter_id = this.props.navigation.getParam('chapter_id');
+    AsyncStorage.getItem('output').then(output => {
+      if (output) {
+        const out = JSON.parse(output);
+        const token = out.token;
+        fetch('http://www.boardpointers.ml/api/pointers', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+          body: JSON.stringify({
+            department_id: department_id,
+            chapter_id: chapter_id,
+          }),
+        })
+          .then(response => response.json())
+          .then(response => {
+            console.log(response);
+            this.setState({
+              dataSource: [...response.success],
+            });
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    });
+  }
   toggleModal = () => {
     this.setState({isModalVisible: !this.state.isModalVisible});
+    AsyncStorage.getItem('output').then(output => {
+      if (output) {
+        const out = JSON.parse(output);
+        const token = out.token;
+        fetch('http://www.boardpointers.ml/api/priority', {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+        })
+          .then(response => response.json())
+          .then(response => {
+            console.log(response);
+            this.setState({
+              checkbox: [...response.success],
+            });
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    });
   };
 
-  rederGridItem = itemData => {
-    return (
-      <TouchableOpacity onPress={this.toggleModal} swipeDirection={'left'}>
-        <View style={styles.pointerStyle}>
-          <Pointers description={itemData.item.description} />
-        </View>
-      </TouchableOpacity>
-    );
-  };
   render() {
+    const {dataSource} = this.state;
+    const {checkbox} = this.state;
     const {checked} = this.state;
     return (
       <View style={styles.mainContainer}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item, index) => item.id}
-          data={POINTERS}
-          renderItem={this.rederGridItem}
-        />
+        <ScrollView showsHorizontalScrollIndicator={false}>
+          {dataSource.map((data, i) => (
+            <TouchableOpacity
+              key={i}
+              onPress={this.toggleModal}
+              swipeDirection={'left'}>
+              <View style={styles.pointerStyle}>
+                <Pointers description={data.pointer} />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
         <Modal isVisible={this.state.isModalVisible}>
-          <View style={styles.modelMainContainer}>
-            <View style={styles.dummyContainer} />
-            <View style={styles.modelContainer}>
+          <View style={styles.modelContainer}>
+            {checkbox.map((item, i) => (
               <View style={styles.prioprityContainer}>
-                <Text style={styles.highPriorityText}>High Priority</Text>
+                <Text style={{fontSize: 20, color: `${item.color}`}}>
+                  {item.name}
+                </Text>
                 <RadioButton
-                  value="first"
-                  status={checked === 'first' ? 'checked' : 'unchecked'}
+                  value={item.id}
+                  status={checked === `${item.id}` ? 'checked' : 'unchecked'}
                   onPress={() => {
-                    this.setState({checked: 'first'});
+                    this.setState({checked: `${item.id}`});
                   }}
                 />
               </View>
-              <View style={styles.prioprityContainer}>
-                <Text style={styles.mediumPriorityText}>Medium Priority</Text>
-                <RadioButton
-                  value="second"
-                  status={checked === 'second' ? 'checked' : 'unchecked'}
-                  onPress={() => {
-                    this.setState({checked: 'second'});
-                  }}
-                />
-              </View>
-              <View style={styles.prioprityContainer}>
-                <Text style={styles.lowPriorityText}>Low Priority</Text>
-                <RadioButton
-                  value="third"
-                  status={checked === 'third' ? 'checked' : 'unchecked'}
-                  onPress={() => {
-                    this.setState({checked: 'third'});
-                  }}
-                />
-              </View>
-              <View style={styles.closeBtnContainer}>
-                <TouchableOpacity
-                  onPress={this.toggleModal}
-                  style={styles.closeBtn}>
-                  <Text style={styles.closeTxt}>Close</Text>
-                </TouchableOpacity>
-              </View>
+            ))}
+            <View style={styles.closeBtnContainer}>
+              <TouchableOpacity
+                onPress={this.toggleModal}
+                style={styles.closeBtn}>
+                <Text style={styles.closeTxt}>Close</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.dummyContainer} />
           </View>
         </Modal>
       </View>
@@ -110,15 +150,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pointerStyle: {
-    flex: 1,
     padding: 10,
   },
-  dummyContainer: {
-    flex: 1,
-  },
   modelContainer: {
-    height: 10,
-    flex: 1,
+    height: 225,
+    // flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 10,
     padding: 22,
@@ -148,13 +184,13 @@ const styles = StyleSheet.create({
     color: '#008000',
   },
   closeBtnContainer: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: 'black',
     borderRadius: 50,
     width: 100,
     marginVertical: 25,
     marginHorizontal: '35%',
-    paddingVertical: 6,
+    paddingVertical: 5,
   },
   closeBtn: {
     alignItems: 'center',
