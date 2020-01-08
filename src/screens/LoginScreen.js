@@ -8,10 +8,13 @@ import {
   TouchableOpacity,
   ScrollView,
   AsyncStorage,
+  Alert,
 } from 'react-native';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
 
 class LoginScreen extends Component {
   state = {
@@ -27,35 +30,32 @@ class LoginScreen extends Component {
     const {email} = this.state;
     const {password} = this.state;
 
-    fetch('http://www.boardpointers.ml/api/login', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    })
-      .then(response => response.json())
-      .then(responseJson => {
-        // console.log(responseJson);
-        const {token, name, email, user_id} = responseJson.success;
-        const constants = {
-          token: token,
-          name: name,
-          email: email,
-          user_id: user_id,
-        };
-        AsyncStorage.setItem('output', JSON.stringify(constants));
-        this.props.navigation.navigate({
-          routeName: 'Home',
-        });
+    const loginDetails = {
+      email: email,
+      password: password,
+    };
+
+    axios
+      .post('http://www.boardpointers.ml/api/login', loginDetails)
+      .then(res => {
+        AsyncStorage.setItem('token', res.data.success.token);
+        AsyncStorage.setItem('name', res.data.success.name);
+        AsyncStorage.setItem('email', res.data.success.email);
+        AsyncStorage.setItem('user_id', res.data.success.user_id);
+        this.props.navigation.navigate({routeName: 'Home'});
       })
-      .catch(error => {
-        console.error(error);
-      });
+      .catch(err =>
+        Snackbar.show({
+          title: 'Invalid credentials!!!',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#fff',
+          color: 'red',
+          action: {
+            title: 'Close',
+            color: 'green',
+          },
+        }),
+      );
   };
 
   render() {

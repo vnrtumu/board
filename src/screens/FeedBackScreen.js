@@ -13,6 +13,8 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
 
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
 
 class FeedBackScreen extends Component {
   state = {
@@ -29,32 +31,51 @@ class FeedBackScreen extends Component {
     const {email} = this.state;
     const {subject} = this.state;
     const {message} = this.state;
-    // console.log(this.state);
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        fetch('http://www.boardpointers.ml/api/feedback', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-          body: JSON.stringify({
-            email: email,
-            subject: subject,
-            message: message,
-          }),
-        })
-          .then(response => response.json())
-          .then(responseJson => {
-            console.log(responseJson);
-            Alert.alert('Your feedBack Submitted Successfully');
+    const feedBack = {
+      email: email,
+      subject: subject,
+      message: message,
+    };
+
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .post('http://www.boardpointers.ml/api/feedback', feedBack, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
           })
-          .catch(error => {
-            console.error(error);
-          });
+          .then(res =>
+            Snackbar.show({
+              title: 'You Feedback Delivered Successfully',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'orange',
+              action: {
+                title: 'Close',
+                color: 'green',
+                onPress: () => {
+                  this.setState({
+                    name: '',
+                    email: '',
+                    password: '',
+                  });
+                },
+              },
+            }),
+          )
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   };

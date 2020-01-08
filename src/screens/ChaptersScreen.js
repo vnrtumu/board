@@ -3,6 +3,9 @@ import {View, StyleSheet, AsyncStorage} from 'react-native';
 
 import ChapterCard from '../components/ChapterCard';
 
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
+
 class ChaptersScreen extends Component {
   constructor(props) {
     super(props);
@@ -11,32 +14,35 @@ class ChaptersScreen extends Component {
     };
   }
   componentDidMount() {
-    const department_id = this.props.navigation.getParam('department_id');
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        fetch('http://www.boardpointers.ml/api/chapters', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-          body: JSON.stringify({
-            department_id: department_id,
-          }),
-        })
-          .then(response => response.json())
-          .then(response => {
-            console.log(response);
+    const departmentId = this.props.navigation.getParam('department_id');
+    const department_id = {
+      department_id: departmentId,
+    };
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .post('http://www.boardpointers.ml/api/chapters', department_id, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
             this.setState({
-              dataSource: [...response.success],
+              dataSource: [...res.data.success],
             });
           })
-          .catch(error => {
-            console.log(error);
-          });
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   }

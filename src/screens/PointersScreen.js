@@ -8,10 +8,12 @@ import {
   ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
-
-// import {POINTERS} from '../data/dummy';
 import Pointers from '../components/Pointers';
 import {RadioButton} from 'react-native-paper';
+
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
+
 export default class PointersScreen extends Component {
   constructor(props) {
     super(props);
@@ -25,61 +27,69 @@ export default class PointersScreen extends Component {
   }
 
   componentDidMount() {
-    const department_id = this.props.navigation.getParam('department_id');
-    const chapter_id = this.props.navigation.getParam('chapter_id');
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        fetch('http://www.boardpointers.ml/api/pointers', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-          body: JSON.stringify({
-            department_id: department_id,
-            chapter_id: chapter_id,
-          }),
-        })
-          .then(response => response.json())
-          .then(response => {
-            console.log(response);
+    const departmentId = this.props.navigation.getParam('department_id');
+    const chapterId = this.props.navigation.getParam('chapter_id');
+    const chapterData = {
+      department_id: departmentId,
+      chapter_id: chapterId,
+    };
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .post('http://www.boardpointers.ml/api/pointers', chapterData, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
             this.setState({
-              dataSource: [...response.success],
+              dataSource: [...res.data.success],
             });
           })
-          .catch(error => {
-            console.log(error);
-          });
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   }
+
   toggleModal = () => {
     this.setState({isModalVisible: !this.state.isModalVisible});
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        fetch('http://www.boardpointers.ml/api/priority', {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-        })
-          .then(response => response.json())
-          .then(response => {
-            console.log(response);
+
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .get('http://www.boardpointers.ml/api/priority', {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
             this.setState({
-              checkbox: [...response.success],
+              checkbox: [...res.data.success],
             });
           })
-          .catch(error => {
-            console.log(error);
-          });
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   };
@@ -106,7 +116,7 @@ export default class PointersScreen extends Component {
         <Modal isVisible={this.state.isModalVisible}>
           <View style={styles.modelContainer}>
             {checkbox.map((item, i) => (
-              <View style={styles.prioprityContainer}>
+              <View style={styles.prioprityContainer} key={i}>
                 <Text style={{fontSize: 20, color: `${item.color}`}}>
                   {item.name}
                 </Text>

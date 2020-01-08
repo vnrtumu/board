@@ -11,6 +11,8 @@ import {
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
 
 class ChangePassword extends Component {
   state = {
@@ -27,32 +29,45 @@ class ChangePassword extends Component {
     const {current_password} = this.state;
     const {new_password} = this.state;
     const {c_password} = this.state;
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        fetch('http://www.boardpointers.ml/api/changePassword', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-          body: JSON.stringify({
-            current_password: current_password,
-            new_password: new_password,
-            c_password: c_password,
-          }),
-        })
-          .then(response => response.json())
-          .then(responseJson => {
-            console.log(responseJson);
-            Alert.alert('Your Password Changed Successfully');
+    const ChangePass = {
+      current_password: current_password,
+      new_password: new_password,
+      c_password: c_password,
+    };
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .post('http://www.boardpointers.ml/api/changePassword', ChangePass, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
+            AsyncStorage.removeItem('token');
+            Snackbar.show({
+              title: 'You Password Updated Successfully',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'orange',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            });
             this.props.navigation.navigate('Login');
           })
-          .catch(error => {
-            console.error(error);
-          });
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   };
@@ -75,6 +90,7 @@ class ChangePassword extends Component {
               autoCapitalize="none"
               autoCorrect={false}
               returnKeyType={'next'}
+              secureTextEntry
               style={styles.emailInput}
               onChangeText={val => this.onChangeText('current_password', val)}
             />
@@ -87,6 +103,7 @@ class ChangePassword extends Component {
               iconWidth={40}
               inputPadding={16}
               autoCapitalize="none"
+              secureTextEntry
               autoCorrect={false}
               style={styles.subjectInput}
               onChangeText={val => this.onChangeText('new_password', val)}
@@ -100,6 +117,7 @@ class ChangePassword extends Component {
               iconWidth={40}
               inputPadding={16}
               autoCapitalize="none"
+              secureTextEntry
               autoCorrect={false}
               style={styles.subjectInput}
               onChangeText={val => this.onChangeText('c_password', val)}

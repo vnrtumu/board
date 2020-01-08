@@ -17,83 +17,76 @@ import MediumPriority from '../screens/topTabs/MediumPriority';
 import FeedBackScreen from '../screens/FeedBackScreen';
 import ChangePassword from '../screens/ChangePassword';
 
-const BoardNavigator = createStackNavigator(
-  {
-    Home: {
-      screen: HomeScreen,
-      navigationOptions: {
-        headerTitle: 'Home',
-        headerTitleStyle: {
-          textAlign: 'center',
-          flex: 1,
-        },
-        headerStyle: {
-          backgroundColor: 'white',
-        },
-        headerTintColor: 'black',
+const BoardNavigator = createStackNavigator({
+  Home: {
+    screen: HomeScreen,
+    navigationOptions: {
+      headerTitle: 'Home',
+      headerTitleStyle: {
+        textAlign: 'center',
+        flex: 1,
       },
-    },
-
-    Chapters: {
-      screen: ChaptersScreen,
-      navigationOptions: {
-        headerTitleStyle: {
-          textAlign: 'center',
-          flex: 1,
-        },
-        headerStyle: {
-          backgroundColor: 'white',
-        },
-        headerTintColor: 'black',
+      headerStyle: {
+        backgroundColor: 'white',
       },
-    },
-    Pointers: {
-      screen: PointersScreen,
-      navigationOptions: {
-        headerTitleStyle: {
-          flex: 1,
-        },
-        headerStyle: {
-          backgroundColor: 'white',
-        },
-        headerTintColor: 'black',
-      },
-    },
-    FeedBack: {
-      screen: FeedBackScreen,
-      navigationOptions: {
-        headerTitle: 'FeedBack',
-        headerTitleStyle: {
-          textAlign: 'center',
-          flex: 1,
-        },
-        headerStyle: {
-          backgroundColor: 'white',
-        },
-        headerTintColor: 'black',
-      },
-    },
-    Change: {
-      screen: ChangePassword,
-      navigationOptions: {
-        headerTitle: 'Change Password',
-        headerTitleStyle: {
-          textAlign: 'center',
-          flex: 1,
-        },
-        headerStyle: {
-          backgroundColor: 'white',
-        },
-        headerTintColor: 'black',
-      },
+      headerTintColor: 'black',
     },
   },
-  // {
-  //   defaultNavigationOptions: {
-  //     initialRouteName: 'Home',
-  //   },
-  // },
-);
+
+  Chapters: {
+    screen: ChaptersScreen,
+    navigationOptions: {
+      headerTitleStyle: {
+        textAlign: 'center',
+        flex: 1,
+      },
+      headerStyle: {
+        backgroundColor: 'white',
+      },
+      headerTintColor: 'black',
+    },
+  },
+  Pointers: {
+    screen: PointersScreen,
+    navigationOptions: {
+      headerTitleStyle: {
+        flex: 1,
+      },
+      headerStyle: {
+        backgroundColor: 'white',
+      },
+      headerTintColor: 'black',
+    },
+  },
+  FeedBack: {
+    screen: FeedBackScreen,
+    navigationOptions: {
+      headerTitle: 'FeedBack',
+      headerTitleStyle: {
+        textAlign: 'center',
+        flex: 1,
+      },
+      headerStyle: {
+        backgroundColor: 'white',
+      },
+      headerTintColor: 'black',
+    },
+  },
+  Change: {
+    screen: ChangePassword,
+    navigationOptions: {
+      headerTitle: 'Change Password',
+      headerTitleStyle: {
+        textAlign: 'center',
+        flex: 1,
+      },
+      headerStyle: {
+        backgroundColor: 'white',
+      },
+      headerTintColor: 'black',
+    },
+  },
+});
 
 const topNav = createMaterialTopTabNavigator(
   {

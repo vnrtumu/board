@@ -4,8 +4,6 @@ import {StyleSheet, View, Text, Platform} from 'react-native';
 
 import AppIntroSlider from 'react-native-app-intro-slider';
 
-import AuthNavigator from '../navigator/AuthNav';
-
 export default class AppIntroScreen extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +21,7 @@ export default class AppIntroScreen extends Component {
   };
   render() {
     if (this.state.show_Main_App) {
-      return <AuthNavigator />;
+      return this.props.navigation.navigate('Login');
     } else {
       return (
         <AppIntroSlider

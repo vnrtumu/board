@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -7,92 +7,145 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  AsyncStorage,
 } from 'react-native';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
 
-const RegisterScreen = props => {
-  return (
-    <View style={styles.mainContainer}>
-      <ImageBackground
-        source={require('../assets/images/bg4.png')}
-        style={styles.bgStyle}>
-        <ScrollView>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require('../assets/images/logo2.png')}
-              style={styles.logoStyle}
-            />
-          </View>
-          <View>
-            <View style={styles.formContainer}>
-              <Text style={styles.formText}>Create Your Account</Text>
+class RegisterScreen extends Component {
+  state = {
+    name: '',
+    email: '',
+    password: '',
+  };
+
+  onChangeText = (key, val) => {
+    this.setState({[key]: val});
+  };
+
+  RegisterHandler = async () => {  
+    const {name} = this.state;
+    const {email} = this.state;
+    const {password} = this.state;
+
+    const userDetails = {
+      name: name,
+      email: email,
+      password: password,
+      c_password: password,
+    };
+
+    axios
+      .post('http://www.boardpointers.ml/api/register', userDetails)
+      .then(res => {
+        AsyncStorage.setItem('token', res.data.success.token);
+        AsyncStorage.setItem('name', res.data.success.name);
+        AsyncStorage.setItem('email', res.data.success.email);
+        AsyncStorage.setItem('user_id', res.data.success.user_id);
+        this.props.navigation.navigate({routeName: 'Home'});
+      })
+      .catch(err =>
+        Snackbar.show({
+          title: 'Please enter Valid details.',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#fff',
+          color: 'red',
+          action: {
+            title: 'Close',
+            color: 'green',
+          },
+        }),
+      );
+  };
+
+  render() {
+    return (
+      <View style={styles.mainContainer}>
+        <ImageBackground
+          source={require('../assets/images/bg4.png')}
+          style={styles.bgStyle}>
+          <ScrollView>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../assets/images/logo2.png')}
+                style={styles.logoStyle}
+              />
             </View>
-            <View style={styles.inputContainer}>
-              <Fumi
-                label={'Enter Your Name'}
-                iconClass={FontAwesomeIcon}
-                iconName={'user'}
-                iconColor={'#f95a25'}
-                iconSize={20}
-                iconWidth={40}
-                inputPadding={16}
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType={'next'}
-                style={styles.emailInput}
-              />
-              <Fumi
-                label={'Email Address'}
-                iconClass={FontAwesomeIcon}
-                iconName={'envelope'}
-                iconColor={'#f95a25'}
-                iconSize={20}
-                iconWidth={40}
-                inputPadding={16}
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType={'next'}
-                style={styles.emailInput}
-              />
-              <Fumi
-                label={'Password'}
-                iconClass={FontAwesomeIcon}
-                iconName={'eye'}
-                iconColor={'#f95a25'}
-                iconSize={20}
-                iconWidth={40}
-                inputPadding={16}
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry
-                style={styles.passwordInput}
-              />
-              <View style={styles.btnContiners}>
-                <TouchableOpacity
-                  style={styles.submitBtn}
-                  onPress={() =>
-                    props.navigation.navigate({routeName: 'Home'})
-                  }>
-                  <Text style={styles.loginText}>Sign Up</Text>
-                </TouchableOpacity>
+            <View>
+              <View style={styles.formContainer}>
+                <Text style={styles.formText}>Create Your Account</Text>
+              </View>
+              <View style={styles.inputContainer}>
+                <Fumi
+                  label={'Enter Your Name'}
+                  iconClass={FontAwesomeIcon}
+                  iconName={'user'}
+                  iconColor={'#f95a25'}
+                  iconSize={20}
+                  iconWidth={40}
+                  inputPadding={16}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType={'next'}
+                  style={styles.emailInput}
+                  onChangeText={val => this.onChangeText('name', val)}
+                />
+                <Fumi
+                  label={'Email Address'}
+                  iconClass={FontAwesomeIcon}
+                  iconName={'envelope'}
+                  iconColor={'#f95a25'}
+                  iconSize={20}
+                  iconWidth={40}
+                  inputPadding={16}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType={'next'}
+                  style={styles.emailInput}
+                  onChangeText={val => this.onChangeText('email', val)}
+                />
+                <Fumi
+                  label={'Password'}
+                  iconClass={FontAwesomeIcon}
+                  iconName={'eye'}
+                  iconColor={'#f95a25'}
+                  iconSize={20}
+                  iconWidth={40}
+                  inputPadding={16}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry
+                  style={styles.passwordInput}
+                  onChangeText={val => this.onChangeText('password', val)}
+                />
+                <View style={styles.btnContiners}>
+                  <TouchableOpacity
+                    style={styles.submitBtn}
+                    onPress={this.RegisterHandler}>
+                    <Text style={styles.loginText}>Sign Up</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.bottmText}>
-            <Text style={styles.btmTxt}>Already a Board Pointer's User?</Text>
-            <TouchableOpacity
-              style={styles.signUpButton}
-              onPress={() => props.navigation.navigate({routeName: 'Login'})}>
-              <Text style={styles.signupTxt}> Login</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </ImageBackground>
-    </View>
-  );
-};
+            <View style={styles.bottmText}>
+              <Text style={styles.btmTxt}>Already a Board Pointer's User?</Text>
+              <TouchableOpacity
+                style={styles.signUpButton}
+                onPress={() =>
+                  this.props.navigation.navigate({routeName: 'Login'})
+                }>
+                <Text style={styles.signupTxt}> Login</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </ImageBackground>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

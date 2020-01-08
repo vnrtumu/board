@@ -3,6 +3,8 @@ import {View, StyleSheet, AsyncStorage} from 'react-native';
 
 import Card from '../components/Card';
 import {ScrollView} from 'react-native-gesture-handler';
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
 
 class HomeScreen extends Component {
   constructor(props) {
@@ -12,30 +14,31 @@ class HomeScreen extends Component {
     };
   }
   componentDidMount() {
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        console.log(token);
-        fetch('http://www.boardpointers.ml/api/departments', {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-        })
-          .then(response => response.json())
-          .then(response => {
-            // console.log(response.success);
-            // // AsyncStorage.setItem('department_id', response.success.id);
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .get('http://www.boardpointers.ml/api/departments', {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
             this.setState({
-              dataSource: [...response.success],
+              dataSource: [...res.data.success],
             });
           })
-          .catch(error => {
-            console.log(error);
-          });
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   }

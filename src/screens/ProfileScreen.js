@@ -13,6 +13,9 @@ import CardOptions from '../components/CardOptions';
 import Icon from 'react-native-vector-icons/Fontisto';
 import ImagePicker from 'react-native-image-picker';
 
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
+
 export default class ProfileScreen extends Component {
   state = {
     email: '',
@@ -21,35 +24,43 @@ export default class ProfileScreen extends Component {
   };
 
   componentDidMount() {
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        console.log(token);
-        fetch('http://www.boardpointers.ml/api/profileDisplay', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-        })
-          .then(response => response.json())
-          .then(response => {
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .get('http://www.boardpointers.ml/api/profileDisplay', {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
             this.setState({
-              email: response.success.email,
-              name: response.success.name,
+              email: res.data.success.email,
+              name: res.data.success.name,
               ImageSource: {
-                uri: response.success.path + response.success.profile,
+                uri: res.data.success.path + res.data.success.profile,
               },
             });
           })
-          .catch(error => {
-            console.log(error);
-          });
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   }
+
+  clearAsyncStorage = () => {
+    AsyncStorage.clear();
+    this.props.navigation.navigate('Login');
+  };
 
   selectPhotoTapped() {
     const options = {
@@ -62,7 +73,7 @@ export default class ProfileScreen extends Component {
     };
 
     ImagePicker.showImagePicker(options, imgResponse => {
-      console.log('Response = ', imgResponse);
+      // console.log('Response = ', imgResponse);
 
       if (imgResponse.didCancel) {
         console.log('User cancelled photo picker');
@@ -78,28 +89,45 @@ export default class ProfileScreen extends Component {
         this.setState({
           ImageSource: source,
         });
-        AsyncStorage.getItem('output').then(output => {
-          if (output) {
-            const out = JSON.parse(output);
-            const token = out.token;
-            fetch('http://www.boardpointers.ml/api/profileSave', {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token,
-              },
-              body: JSON.stringify({
-                profile: imgResponse.data,
-              }),
-            })
-              .then(response => response.json())
-              .then(responseJson => {
-                console.log(responseJson);
+        const profileSave = {
+          profile: imgResponse.data,
+        };
+        AsyncStorage.getItem('token').then(token => {
+          if (token) {
+            axios
+              .post(
+                'http://www.boardpointers.ml/api/profileSave',
+                profileSave,
+                {
+                  headers: {
+                    Authorization: 'Bearer ' + token,
+                  },
+                },
+              )
+              .then(res => {
+                Snackbar.show({
+                  title: 'Profile Image Updated Succesfully!',
+                  duration: Snackbar.LENGTH_SHORT,
+                  backgroundColor: '#fff',
+                  color: 'Orange',
+                  action: {
+                    title: 'Close',
+                    color: 'green',
+                  },
+                });
               })
-              .catch(error => {
-                console.error(error);
-              });
+              .catch(err =>
+                Snackbar.show({
+                  title: 'Something Went Wrong!',
+                  duration: Snackbar.LENGTH_SHORT,
+                  backgroundColor: '#fff',
+                  color: 'red',
+                  action: {
+                    title: 'Close',
+                    color: 'green',
+                  },
+                }),
+              );
           }
         });
       }
@@ -161,14 +189,14 @@ export default class ProfileScreen extends Component {
               this.props.navigation.navigate({routeName: 'FeedBack'})
             }
           />
+          {/* <TouchableOpacity onPress={this.clearAsyncStorage}> */}
           <CardOptions
             title="Log Out"
             icon="sign-out"
             style={styles.cardOptions}
-            onSelect={() =>
-              this.props.navigation.navigate({routeName: 'Login'})
-            }
+            onSelect={this.clearAsyncStorage}
           />
+          {/* </TouchableOpacity> */}
         </View>
       </ScrollView>
     );

@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, AsyncStorage} from 'react-native';
+import {View, StyleSheet, AsyncStorage, Alert} from 'react-native';
 
 import BookMark from '../../components/BookMark';
+
+import axios from 'axios';
+import Snackbar from 'react-native-snackbar';
 
 class HighPriority extends Component {
   constructor(props) {
@@ -10,33 +13,36 @@ class HighPriority extends Component {
       dataSource: [],
     };
   }
+
   componentDidMount() {
-    AsyncStorage.getItem('output').then(output => {
-      if (output) {
-        const out = JSON.parse(output);
-        const token = out.token;
-        const user_id = out.user_id;
-        fetch('http://www.boardpointers.ml/api/getBookmarks', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-          body: JSON.stringify({
-            priority_id: 1,
-            user_id: user_id,
-          }),
-        })
-          .then(response => response.json())
-          .then(response => {
+    const priorityId = {
+      priority_id: 1,
+    };
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .post('http://www.boardpointers.ml/api/getBookmarks', priorityId, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
             this.setState({
-              dataSource: [...response.success],
+              dataSource: [...res.data.success],
             });
           })
-          .catch(error => {
-            console.log(error);
-          });
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
       }
     });
   }

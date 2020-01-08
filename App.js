@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-
-import AppIntroScreen from './src/screens/AppIntroScreen';
+import AuthNavigator from './src/navigator/AuthNav';
 
 export default class App extends Component {
   render() {
-    return <AppIntroScreen />;
+    return <AuthNavigator />;
   }
 }
