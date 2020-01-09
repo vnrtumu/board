@@ -21,8 +21,9 @@ export default class PointersScreen extends Component {
       dataSource: [],
       checkbox: [],
       isModalVisible: false,
-      checked1: false,
-      checked2: false,
+      checkedValue: '',
+      pointer_id: '',
+      priority_id: '',
     };
   }
 
@@ -62,9 +63,8 @@ export default class PointersScreen extends Component {
     });
   }
 
-  toggleModal = () => {
+  openModel = () => {
     this.setState({isModalVisible: !this.state.isModalVisible});
-
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
@@ -93,6 +93,57 @@ export default class PointersScreen extends Component {
       }
     });
   };
+  closeModel = id => {
+    const departmentId = this.props.navigation.getParam('department_id');
+    const chapterId = this.props.navigation.getParam('chapter_id');
+    const priorityId = id;
+    const pointerId = this.state.pointer_id;
+    const newMark = {
+      department_id: departmentId,
+      chapter_id: chapterId,
+      pointer_id: pointerId,
+      priority_id: priorityId,
+    };
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .post('http://www.boardpointers.ml/api/newBookmark', newMark, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res =>
+            Snackbar.show({
+              title: 'This pointer is Bookmarked!',
+              duration: Snackbar.LENGTH_INDEFINITE,
+              backgroundColor: '#fff',
+              color: 'orange',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          )
+          .catch(err =>
+            Snackbar.show({
+              title: 'Something Went Wrong!',
+              duration: Snackbar.LENGTH_INDEFINITE,
+              backgroundColor: '#fff',
+              color: 'red',
+              action: {
+                title: 'Close',
+                color: 'green',
+              },
+            }),
+          );
+      }
+    });
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
+
+  // newBookMark = id => {
+  //   console.log(id);
+  // };
 
   render() {
     const {dataSource} = this.state;
@@ -104,8 +155,17 @@ export default class PointersScreen extends Component {
           {dataSource.map((data, i) => (
             <TouchableOpacity
               key={i}
-              onPress={this.toggleModal}
-              swipeDirection={'left'}>
+              swipeDirection={'left'}
+              onPress={() => {
+                this.setState(
+                  {
+                    pointer_id: `${data.pointer_id}`,
+                  },
+                  () => {
+                    this.openModel(data.pointer_id);
+                  },
+                );
+              }}>
               <View style={styles.pointerStyle}>
                 <Pointers description={data.pointer} />
               </View>
@@ -124,18 +184,19 @@ export default class PointersScreen extends Component {
                   value={item.id}
                   status={checked === `${item.id}` ? 'checked' : 'unchecked'}
                   onPress={() => {
-                    this.setState({checked: `${item.id}`});
+                    this.setState(
+                      {
+                        checked: `${item.id}`,
+                        checkedValue: `${item.id}`,
+                      },
+                      () => {
+                        this.closeModel(item.id);
+                      },
+                    );
                   }}
                 />
               </View>
             ))}
-            <View style={styles.closeBtnContainer}>
-              <TouchableOpacity
-                onPress={this.toggleModal}
-                style={styles.closeBtn}>
-                <Text style={styles.closeTxt}>Close</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </Modal>
       </View>

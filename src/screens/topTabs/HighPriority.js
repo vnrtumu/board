@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, AsyncStorage, Alert} from 'react-native';
+import {View, StyleSheet, AsyncStorage, Alert, ScrollView} from 'react-native';
 
 import BookMark from '../../components/BookMark';
 
@@ -49,17 +49,19 @@ class HighPriority extends Component {
   render() {
     const {dataSource} = this.state;
     return (
-      <View style={styles.mainContainer}>
-        {dataSource.map((data, i) => (
-          <BookMark
-            title={data.department_name}
-            chapter_title={data.chapter_title}
-            pointer={data.pointers}
-            style={styles.chapterCardtext}
-            colorCode={data.color}
-          />
-        ))}
-      </View>
+      <ScrollView>
+        <View style={styles.mainContainer}>
+          {dataSource.map((data, i) => (
+            <BookMark
+              title={data.department_name}
+              chapter_title={data.chapter_title}
+              pointer={data.pointers}
+              style={styles.chapterCardtext}
+              colorCode={data.color}
+            />
+          ))}
+        </View>
+      </ScrollView>
     );
   }
 }
