@@ -106,7 +106,11 @@ class LoginScreen extends Component {
                   onChangeText={val => this.onChangeText('password', val)}
                 />
                 <View style={styles.btnContiners}>
-                  <TouchableOpacity style={styles.forgotPass}>
+                  <TouchableOpacity
+                    style={styles.forgotPass}
+                    onPress={() =>
+                      this.props.navigation.navigate({routeName: 'Forgot'})
+                    }>
                     <Text style={styles.forgotPassText}>Forgot Password?</Text>
                   </TouchableOpacity>
                   <TouchableOpacity

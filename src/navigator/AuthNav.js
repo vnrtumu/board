@@ -3,10 +3,13 @@ import {createStackNavigator} from 'react-navigation-stack';
 
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import ForgotPass from '../screens/ForgotPass';
+import ResetPass from '../screens/ResetPass';
 import BoardNavigator from './BoardNavigator';
 
 import SplashScreen from '../screens/SplashScreen';
 import AppIntroScreen from '../screens/AppIntroScreen';
+import VerifyOtp from '../screens/VerifyOtp';
 
 const AuthNavigator = createStackNavigator({
   Splash: {
@@ -29,6 +32,24 @@ const AuthNavigator = createStackNavigator({
   },
   Register: {
     screen: RegisterScreen,
+    navigationOptions: {
+      header: null,
+    },
+  },
+  Forgot: {
+    screen: ForgotPass,
+    navigationOptions: {
+      header: null,
+    },
+  },
+  Verify: {
+    screen: VerifyOtp,
+    navigationOptions: {
+      header: null,
+    },
+  },
+  Reset: {
+    screen: ResetPass,
     navigationOptions: {
       header: null,
     },
