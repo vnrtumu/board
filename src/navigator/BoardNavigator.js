@@ -17,6 +17,8 @@ import MediumPriority from '../screens/topTabs/MediumPriority';
 import FeedBackScreen from '../screens/FeedBackScreen';
 import ChangePassword from '../screens/ChangePassword';
 
+import ProfileNavigator from './ProfileNavigator';
+
 const BoardNavigator = createStackNavigator({
   Home: {
     screen: HomeScreen,
@@ -50,34 +52,6 @@ const BoardNavigator = createStackNavigator({
     screen: PointersScreen,
     navigationOptions: {
       headerTitleStyle: {
-        flex: 1,
-      },
-      headerStyle: {
-        backgroundColor: 'white',
-      },
-      headerTintColor: 'black',
-    },
-  },
-  FeedBack: {
-    screen: FeedBackScreen,
-    navigationOptions: {
-      headerTitle: 'FeedBack',
-      headerTitleStyle: {
-        textAlign: 'center',
-        flex: 1,
-      },
-      headerStyle: {
-        backgroundColor: 'white',
-      },
-      headerTintColor: 'black',
-    },
-  },
-  Change: {
-    screen: ChangePassword,
-    navigationOptions: {
-      headerTitle: 'Change Password',
-      headerTitleStyle: {
-        textAlign: 'center',
         flex: 1,
       },
       headerStyle: {
@@ -132,7 +106,7 @@ const tabScreenConfig = {
     },
   },
   Profile: {
-    screen: ProfileScreen,
+    screen: ProfileNavigator,
     navigationOptions: {
       tabBarLabel: 'Profile',
       tabBarIcon: ({tintColor}) => {

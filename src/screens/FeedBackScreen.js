@@ -8,6 +8,7 @@ import {
   AsyncStorage,
   Alert,
 } from 'react-native';
+import config from '../../config';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
@@ -40,7 +41,7 @@ class FeedBackScreen extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .post('http://www.boardpointers.ml/api/feedback', feedBack, {
+          .post(`${config.API_URL}/feedback`, feedBack, {
             headers: {
               Authorization: 'Bearer ' + token,
             },

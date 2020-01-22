@@ -6,6 +6,8 @@ import {ScrollView} from 'react-native-gesture-handler';
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
 
+import config from '../../config';
+
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +19,7 @@ class HomeScreen extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .get('http://www.boardpointers.ml/api/departments', {
+          .get(`${config.API_URL}/departments`, {
             headers: {
               Authorization: 'Bearer ' + token,
             },

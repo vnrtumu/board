@@ -13,6 +13,7 @@ import {RadioButton} from 'react-native-paper';
 
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
+import config from '../../config';
 
 export default class PointersScreen extends Component {
   constructor(props) {
@@ -37,7 +38,7 @@ export default class PointersScreen extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .post('http://www.boardpointers.ml/api/pointers', chapterData, {
+          .post(`${config.API_URL}/pointers`, chapterData, {
             headers: {
               Authorization: 'Bearer ' + token,
             },
@@ -68,7 +69,7 @@ export default class PointersScreen extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .get('http://www.boardpointers.ml/api/priority', {
+          .get(`${config.API_URL}/priority`, {
             headers: {
               Authorization: 'Bearer ' + token,
             },
@@ -93,6 +94,7 @@ export default class PointersScreen extends Component {
       }
     });
   };
+
   closeModel = id => {
     const departmentId = this.props.navigation.getParam('department_id');
     const chapterId = this.props.navigation.getParam('chapter_id');
@@ -107,7 +109,7 @@ export default class PointersScreen extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .post('http://www.boardpointers.ml/api/newBookmark', newMark, {
+          .post(`${config.API_URL}/newBookmark`, newMark, {
             headers: {
               Authorization: 'Bearer ' + token,
             },
@@ -152,25 +154,39 @@ export default class PointersScreen extends Component {
     return (
       <View style={styles.mainContainer}>
         <ScrollView showsHorizontalScrollIndicator={false}>
-          {dataSource.map((data, i) => (
-            <TouchableOpacity
-              key={i}
-              swipeDirection={'left'}
-              onPress={() => {
-                this.setState(
-                  {
-                    pointer_id: `${data.pointer_id}`,
-                  },
-                  () => {
-                    this.openModel(data.pointer_id);
-                  },
-                );
-              }}>
-              <View style={styles.pointerStyle}>
-                <Pointers description={data.pointer} />
-              </View>
-            </TouchableOpacity>
-          ))}
+          {dataSource.map((data, i) => {
+            if (data.color === null) {
+              return (
+                <TouchableOpacity
+                  key={i}
+                  swipeDirection={'left'}
+                  onPress={() => {
+                    this.setState(
+                      {
+                        pointer_id: `${data.pointer_id}`,
+                      },
+                      () => {
+                        this.openModel(data.pointer_id);
+                      },
+                    );
+                  }}>
+                  <View style={styles.pointerStyle}>
+                    <Pointers description={data.pointer} />
+                  </View>
+                </TouchableOpacity>
+              );
+            } else {
+              return (
+                <View style={styles.pointerStyle}>
+                  <Pointers
+                    key={i}
+                    description={data.pointer}
+                    style={{backgroundColor: `${data.color}`}}
+                  />
+                </View>
+              );
+            }
+          })}
         </ScrollView>
 
         <Modal isVisible={this.state.isModalVisible}>

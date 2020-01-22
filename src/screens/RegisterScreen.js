@@ -1,3 +1,4 @@
+/* eslint-disable handle-callback-err */
 import React, {Component} from 'react';
 import {
   View,
@@ -9,6 +10,7 @@ import {
   ScrollView,
   AsyncStorage,
 } from 'react-native';
+import config from '../../config';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
@@ -26,7 +28,7 @@ class RegisterScreen extends Component {
     this.setState({[key]: val});
   };
 
-  RegisterHandler = async () => {  
+  RegisterHandler = async () => {
     const {name} = this.state;
     const {email} = this.state;
     const {password} = this.state;
@@ -39,7 +41,7 @@ class RegisterScreen extends Component {
     };
 
     axios
-      .post('http://www.boardpointers.ml/api/register', userDetails)
+      .post(`${config.API_URL}/register`, userDetails)
       .then(res => {
         AsyncStorage.setItem('token', res.data.success.token);
         AsyncStorage.setItem('name', res.data.success.name);

@@ -5,6 +5,7 @@ import ChapterCard from '../components/ChapterCard';
 
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
+import config from '../../config';
 
 class ChaptersScreen extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class ChaptersScreen extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .post('http://www.boardpointers.ml/api/chapters', department_id, {
+          .post(`${config.API_URL}/chapters`, department_id, {
             headers: {
               Authorization: 'Bearer ' + token,
             },

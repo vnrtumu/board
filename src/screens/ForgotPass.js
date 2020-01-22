@@ -13,6 +13,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
+import config from '../../config';
 
 class ForgotPass extends Component {
   state = {
@@ -28,8 +29,9 @@ class ForgotPass extends Component {
     const forgotPass = {
       email: email,
     };
+    // alert(`${config.API_URL}/forgotPass`);
     axios
-      .post('http://www.boardpointers.ml/api/forgotPass', forgotPass)
+      .post(`${config.API_URL}/forgotPass`, forgotPass)
       .then(res => {
         AsyncStorage.setItem('email', this.state.email);
         this.props.navigation.navigate('Verify');

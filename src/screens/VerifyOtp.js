@@ -7,6 +7,7 @@ import {
   ScrollView,
   AsyncStorage,
 } from 'react-native';
+import config from '../../config';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
@@ -46,7 +47,7 @@ class VerifyOtp extends Component {
           otp: otp,
         };
         axios
-          .post('http://www.boardpointers.ml/api/verifyOtp', verifyOtp)
+          .post(`${config.API_URL}/verifyOtp`, verifyOtp)
           .then(res => {
             Snackbar.show({
               title: 'You otp verifed Successfully',

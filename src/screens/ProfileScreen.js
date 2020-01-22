@@ -15,7 +15,7 @@ import ImagePicker from 'react-native-image-picker';
 
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
-
+import config from '../../config';
 export default class ProfileScreen extends Component {
   state = {
     email: '',
@@ -27,7 +27,7 @@ export default class ProfileScreen extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .get('http://www.boardpointers.ml/api/profileDisplay', {
+          .get(`${config.API_URL}/profileDisplay`, {
             headers: {
               Authorization: 'Bearer ' + token,
             },
@@ -95,21 +95,17 @@ export default class ProfileScreen extends Component {
         AsyncStorage.getItem('token').then(token => {
           if (token) {
             axios
-              .post(
-                'http://www.boardpointers.ml/api/profileSave',
-                profileSave,
-                {
-                  headers: {
-                    Authorization: 'Bearer ' + token,
-                  },
+              .post(`${config.API_URL}/profileSave`, profileSave, {
+                headers: {
+                  Authorization: 'Bearer ' + token,
                 },
-              )
+              })
               .then(res => {
                 Snackbar.show({
                   title: 'Profile Image Updated Succesfully!',
                   duration: Snackbar.LENGTH_SHORT,
                   backgroundColor: '#fff',
-                  color: 'Orange',
+                  color: 'green',
                   action: {
                     title: 'Close',
                     color: 'green',

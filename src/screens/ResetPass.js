@@ -7,6 +7,7 @@ import {
   ScrollView,
   AsyncStorage,
 } from 'react-native';
+import config from '../../config';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
@@ -36,7 +37,7 @@ class ChangePassword extends Component {
         };
         console.log(ResetPass);
         axios
-          .post('http://www.boardpointers.ml/api/resetPass', ResetPass)
+          .post(`${config.API_URL}/resetPass`, ResetPass)
           .then(res => {
             Snackbar.show({
               title: 'You Password Updated Successfully',

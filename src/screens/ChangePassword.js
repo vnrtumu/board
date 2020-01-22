@@ -5,9 +5,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Alert,
   AsyncStorage,
 } from 'react-native';
+import config from '../../config';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
@@ -37,7 +37,7 @@ class ChangePassword extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .post('http://www.boardpointers.ml/api/changePassword', ChangePass, {
+          .post(`${config.API_URL}/changePassword`, ChangePass, {
             headers: {
               Authorization: 'Bearer ' + token,
             },

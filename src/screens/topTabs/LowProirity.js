@@ -4,7 +4,7 @@ import {View, StyleSheet, AsyncStorage, ScrollView} from 'react-native';
 import BookMark from '../../components/BookMark';
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
-
+import config from '../../../config';
 class LowPriority extends Component {
   constructor(props) {
     super(props);
@@ -19,7 +19,7 @@ class LowPriority extends Component {
     AsyncStorage.getItem('token').then(token => {
       if (token) {
         axios
-          .post('http://www.boardpointers.ml/api/getBookmarks', priorityId, {
+          .post(`${config.API_URL}/getBookmarks`, priorityId, {
             headers: {
               Authorization: 'Bearer ' + token,
             },
@@ -51,6 +51,7 @@ class LowPriority extends Component {
         <View style={styles.mainContainer}>
           {dataSource.map((data, i) => (
             <BookMark
+              key={i}
               title={data.department_name}
               chapter_title={data.chapter_title}
               pointer={data.pointers}

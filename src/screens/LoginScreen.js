@@ -1,4 +1,4 @@
-import React, {useState, Component} from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,14 @@ import {
   TouchableOpacity,
   ScrollView,
   AsyncStorage,
-  Alert,
 } from 'react-native';
 
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
+
+import config from '../../config';
 
 class LoginScreen extends Component {
   state = {
@@ -36,7 +37,7 @@ class LoginScreen extends Component {
     };
 
     axios
-      .post('http://www.boardpointers.ml/api/login', loginDetails)
+      .post(`${config.API_URL}/login`, loginDetails)
       .then(res => {
         AsyncStorage.setItem('token', res.data.success.token);
         AsyncStorage.setItem('name', res.data.success.name);
