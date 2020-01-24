@@ -27,7 +27,6 @@ class ChangePassword extends Component {
   UpdatePassword = async () => {
     const {new_password} = this.state;
     const {c_password} = this.state;
-
     AsyncStorage.getItem('email').then(email => {
       if (email) {
         const ResetPass = {
@@ -52,6 +51,7 @@ class ChangePassword extends Component {
               },
             };
             WSnackBar.show(snackBarOpts);
+            this.props.navigation.navigate('Login');
           })
           .catch(err => {
             const snackBarOpts = {

@@ -66,6 +66,7 @@ class HighPriority extends Component {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve();
+        this.refreshScreen();
       }, 2000);
     });
   };
