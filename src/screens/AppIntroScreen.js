@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 250,
     resizeMode: 'contain',
   },
 });
@@ -63,11 +63,11 @@ const styles = StyleSheet.create({
 const slides = [
   {
     key: 'k1',
-    title: 'Event Organizer',
-    text: 'Best Event Organizers',
+    title: 'Cardilogy',
+    text: 'Details About Cardilogy',
     image: {
       uri:
-        'https://reactnativecode.com/wp-content/uploads/2019/04/calendar.png',
+        'https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80',
     },
     titleStyle: styles.title,
     textStyle: styles.text,
@@ -76,10 +76,11 @@ const slides = [
   },
   {
     key: 'k2',
-    title: 'Weather Reports',
-    text: 'Latest Weather Reports',
+    title: 'Microbiology',
+    text: 'Details About Microbiology',
     image: {
-      uri: 'https://reactnativecode.com/wp-content/uploads/2019/04/cloud.png',
+      uri:
+        'https://images.unsplash.com/photo-1575468130797-aa950b68aeec?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80',
     },
     titleStyle: styles.title,
     textStyle: styles.text,
@@ -88,40 +89,15 @@ const slides = [
   },
   {
     key: 'k3',
-    title: 'Technology Informations',
-    text: 'Latest Technology Reports',
+    title: 'Medical Technology Informations',
+    text: 'Latest Technology Informations',
     image: {
       uri:
-        'https://reactnativecode.com/wp-content/uploads/2019/04/computer.png',
+        'https://images.pexels.com/photos/305566/pexels-photo-305566.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
     },
     titleStyle: styles.title,
     textStyle: styles.text,
     imageStyle: styles.image,
     backgroundColor: '#2979FF',
-  },
-  {
-    key: 'k4',
-    title: 'Flight Bookings',
-    text: ' Best Deals on Flights',
-    image: {
-      uri: 'https://reactnativecode.com/wp-content/uploads/2019/04/flight.png',
-    },
-    titleStyle: styles.title,
-    textStyle: styles.text,
-    imageStyle: styles.image,
-    backgroundColor: '#1DE9B6',
-  },
-  {
-    key: 'k5',
-    title: 'Restaurant Bookings',
-    text: ' 20% off on first Restaurant booking',
-    image: {
-      uri:
-        'https://reactnativecode.com/wp-content/uploads/2019/04/restaurants.png',
-    },
-    titleStyle: styles.title,
-    textStyle: styles.text,
-    imageStyle: styles.image,
-    backgroundColor: '#FF3D00',
   },
 ];

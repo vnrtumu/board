@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable handle-callback-err */
 import React, {Component} from 'react';
 import {
   View,
@@ -7,20 +9,21 @@ import {
   TouchableOpacity,
   ScrollView,
   AsyncStorage,
+  ActivityIndicator,
 } from 'react-native';
-
+import {WSnackBar} from 'react-native-smart-tip';
 import CardOptions from '../components/CardOptions';
 import Icon from 'react-native-vector-icons/Fontisto';
 import ImagePicker from 'react-native-image-picker';
 
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
 import config from '../../config';
 export default class ProfileScreen extends Component {
   state = {
     email: '',
     name: '',
     ImageSource: null,
+    isLoading: true,
   };
 
   componentDidMount() {
@@ -34,6 +37,7 @@ export default class ProfileScreen extends Component {
           })
           .then(res => {
             this.setState({
+              isLoading: false,
               email: res.data.success.email,
               name: res.data.success.name,
               ImageSource: {
@@ -41,18 +45,21 @@ export default class ProfileScreen extends Component {
               },
             });
           })
-          .catch(err =>
-            Snackbar.show({
-              title: 'Something Went Wrong!',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#fff',
-              color: 'red',
-              action: {
-                title: 'Close',
-                color: 'green',
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Please check the network first.',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {
+                // Click Action
               },
-            }),
-          );
+            };
+            WSnackBar.show(snackBarOpts);
+          });
       }
     });
   }
@@ -101,29 +108,35 @@ export default class ProfileScreen extends Component {
                 },
               })
               .then(res => {
-                Snackbar.show({
-                  title: 'Profile Image Updated Succesfully!',
-                  duration: Snackbar.LENGTH_SHORT,
-                  backgroundColor: '#fff',
-                  color: 'green',
-                  action: {
-                    title: 'Close',
-                    color: 'green',
+                const snackBarOpts = {
+                  data: 'Profile Image Uploaded Successfully',
+                  position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                  duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                  textColor: 'green',
+                  backgroundColor: '#050405',
+                  actionText: 'close',
+                  actionTextColor: 'white',
+                  actionClick: () => {
+                    // Click Action
                   },
-                });
+                };
+                WSnackBar.show(snackBarOpts);
               })
-              .catch(err =>
-                Snackbar.show({
-                  title: 'Something Went Wrong!',
-                  duration: Snackbar.LENGTH_SHORT,
-                  backgroundColor: '#fff',
-                  color: 'red',
-                  action: {
-                    title: 'Close',
-                    color: 'green',
+              .catch(err => {
+                const snackBarOpts = {
+                  data: 'Please check the network first.',
+                  position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                  duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                  textColor: '#ff490b',
+                  backgroundColor: '#050405',
+                  actionText: 'close',
+                  actionTextColor: 'white',
+                  actionClick: () => {
+                    // Click Action
                   },
-                }),
-              );
+                };
+                WSnackBar.show(snackBarOpts);
+              });
           }
         });
       }
@@ -131,6 +144,21 @@ export default class ProfileScreen extends Component {
   }
 
   render() {
+    if (this.state.isLoading) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            padding: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#fff',
+          }}>
+          <ActivityIndicator size={'large'} />
+          <Text>Loding...</Text>
+        </View>
+      );
+    }
     return (
       <ScrollView
         style={styles.mainContainer}

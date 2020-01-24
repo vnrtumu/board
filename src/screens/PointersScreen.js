@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable handle-callback-err */
 import React, {Component} from 'react';
 import {
   Text,
@@ -6,14 +8,15 @@ import {
   TouchableOpacity,
   AsyncStorage,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Pointers from '../components/Pointers';
 import {RadioButton} from 'react-native-paper';
-
+import {WSnackBar} from 'react-native-smart-tip';
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
 import config from '../../config';
+import PTRView from 'react-native-pull-to-refresh';
 
 export default class PointersScreen extends Component {
   constructor(props) {
@@ -25,10 +28,18 @@ export default class PointersScreen extends Component {
       checkedValue: '',
       pointer_id: '',
       priority_id: '',
+      isLoading: true,
     };
   }
+  _refresh = () => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+  };
 
-  componentDidMount() {
+  refreshScreen = () => {
     const departmentId = this.props.navigation.getParam('department_id');
     const chapterId = this.props.navigation.getParam('chapter_id');
     const chapterData = {
@@ -45,23 +56,31 @@ export default class PointersScreen extends Component {
           })
           .then(res => {
             this.setState({
+              isLoading: false,
               dataSource: [...res.data.success],
             });
           })
-          .catch(err =>
-            Snackbar.show({
-              title: 'Something Went Wrong!',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#fff',
-              color: 'red',
-              action: {
-                title: 'Close',
-                color: 'green',
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Please check the network first.',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {
+                // Click Action
               },
-            }),
-          );
+            };
+            WSnackBar.show(snackBarOpts);
+          });
       }
     });
+  };
+
+  componentDidMount() {
+    this.refreshScreen();
   }
 
   openModel = () => {
@@ -79,18 +98,21 @@ export default class PointersScreen extends Component {
               checkbox: [...res.data.success],
             });
           })
-          .catch(err =>
-            Snackbar.show({
-              title: 'Something Went Wrong!',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#fff',
-              color: 'red',
-              action: {
-                title: 'Close',
-                color: 'green',
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Please check the network first.',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {
+                // Click Action
               },
-            }),
-          );
+            };
+            WSnackBar.show(snackBarOpts);
+          });
       }
     });
   };
@@ -114,108 +136,135 @@ export default class PointersScreen extends Component {
               Authorization: 'Bearer ' + token,
             },
           })
-          .then(res =>
-            Snackbar.show({
-              title: 'This pointer is Bookmarked!',
-              duration: Snackbar.LENGTH_INDEFINITE,
-              backgroundColor: '#fff',
-              color: 'orange',
-              action: {
-                title: 'Close',
-                color: 'green',
+          .then(res => {
+            const snackBarOpts = {
+              data: 'Your Bookmarked this Pointer Successfully',
+              position: WSnackBar.position.TOP, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.INDEFINITE, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: this.refreshScreen,
+            };
+            WSnackBar.show(snackBarOpts);
+          })
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Please check the network first.',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {
+                // this.reload();
               },
-            }),
-          )
-          .catch(err =>
-            Snackbar.show({
-              title: 'Something Went Wrong!',
-              duration: Snackbar.LENGTH_INDEFINITE,
-              backgroundColor: '#fff',
-              color: 'red',
-              action: {
-                title: 'Close',
-                color: 'green',
-              },
-            }),
-          );
+            };
+            WSnackBar.show(snackBarOpts);
+          });
       }
     });
     this.setState({isModalVisible: !this.state.isModalVisible});
   };
 
-  // newBookMark = id => {
-  //   console.log(id);
-  // };
+  hideModel = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
 
   render() {
     const {dataSource} = this.state;
     const {checkbox} = this.state;
     const {checked} = this.state;
+    if (this.state.isLoading) {
+      return (
+        <PTRView onRefresh={this._refresh}>
+          <View
+            style={{
+              flex: 1,
+              padding: 20,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#fff',
+            }}>
+            <ActivityIndicator size={'large'} />
+            <Text>Loding...</Text>
+          </View>
+        </PTRView>
+      );
+    }
     return (
-      <View style={styles.mainContainer}>
-        <ScrollView showsHorizontalScrollIndicator={false}>
-          {dataSource.map((data, i) => {
-            if (data.color === null) {
-              return (
-                <TouchableOpacity
-                  key={i}
-                  swipeDirection={'left'}
-                  onPress={() => {
-                    this.setState(
-                      {
-                        pointer_id: `${data.pointer_id}`,
-                      },
-                      () => {
-                        this.openModel(data.pointer_id);
-                      },
-                    );
-                  }}>
-                  <View style={styles.pointerStyle}>
-                    <Pointers description={data.pointer} />
-                  </View>
-                </TouchableOpacity>
-              );
-            } else {
-              return (
-                <View style={styles.pointerStyle}>
-                  <Pointers
+      <PTRView onRefresh={this._refresh}>
+        <View style={styles.mainContainer}>
+          <ScrollView showsHorizontalScrollIndicator={false}>
+            {dataSource.map((data, i) => {
+              if (data.color === null) {
+                return (
+                  <TouchableOpacity
                     key={i}
-                    description={data.pointer}
-                    style={{backgroundColor: `${data.color}`}}
+                    swipeDirection={'left'}
+                    onPress={() => {
+                      this.setState(
+                        {
+                          pointer_id: `${data.pointer_id}`,
+                        },
+                        () => {
+                          this.openModel(data.pointer_id);
+                        },
+                      );
+                    }}>
+                    <View style={styles.pointerStyle}>
+                      <Pointers description={data.pointer} />
+                    </View>
+                  </TouchableOpacity>
+                );
+              } else {
+                return (
+                  <View style={styles.pointerStyle} key={i}>
+                    <Pointers
+                      description={data.pointer}
+                      style={{backgroundColor: `${data.color}`}}
+                    />
+                  </View>
+                );
+              }
+            })}
+          </ScrollView>
+
+          <Modal isVisible={this.state.isModalVisible}>
+            <View style={styles.modelContainer}>
+              {checkbox.map((item, i) => (
+                <View style={styles.prioprityContainer} key={i}>
+                  <Text style={{fontSize: 20, color: `${item.color}`}}>
+                    {item.name}
+                  </Text>
+                  <RadioButton
+                    value={item.id}
+                    status={checked === `${item.id}` ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      this.setState(
+                        {
+                          checked: `${item.id}`,
+                          checkedValue: `${item.id}`,
+                        },
+                        () => {
+                          this.closeModel(item.id);
+                        },
+                      );
+                    }}
                   />
                 </View>
-              );
-            }
-          })}
-        </ScrollView>
-
-        <Modal isVisible={this.state.isModalVisible}>
-          <View style={styles.modelContainer}>
-            {checkbox.map((item, i) => (
-              <View style={styles.prioprityContainer} key={i}>
-                <Text style={{fontSize: 20, color: `${item.color}`}}>
-                  {item.name}
-                </Text>
-                <RadioButton
-                  value={item.id}
-                  status={checked === `${item.id}` ? 'checked' : 'unchecked'}
-                  onPress={() => {
-                    this.setState(
-                      {
-                        checked: `${item.id}`,
-                        checkedValue: `${item.id}`,
-                      },
-                      () => {
-                        this.closeModel(item.id);
-                      },
-                    );
-                  }}
-                />
-              </View>
-            ))}
-          </View>
-        </Modal>
-      </View>
+              ))}
+              <TouchableOpacity
+                onPress={this.hideModel}
+                style={styles.closeBtnContainer}>
+                <Text style={styles.closeBtn}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        </View>
+      </PTRView>
     );
   }
 }
@@ -240,8 +289,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   modelContainer: {
-    height: 225,
-    // flex: 1,
+    height: 200,
     backgroundColor: '#fff',
     paddingHorizontal: 10,
     padding: 22,
@@ -271,16 +319,16 @@ const styles = StyleSheet.create({
     color: '#008000',
   },
   closeBtnContainer: {
-    // flex: 1,
+    marginTop: 10,
     backgroundColor: 'black',
-    borderRadius: 50,
-    width: 100,
-    marginVertical: 25,
+    borderRadius: 40,
+    width: 70,
     marginHorizontal: '35%',
     paddingVertical: 5,
+    alignItems: 'center',
   },
   closeBtn: {
-    alignItems: 'center',
+    color: '#fff',
   },
   closeTxt: {
     color: 'white',

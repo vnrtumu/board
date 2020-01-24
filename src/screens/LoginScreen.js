@@ -1,3 +1,4 @@
+/* eslint-disable handle-callback-err */
 import React, {Component} from 'react';
 import {
   View,
@@ -13,11 +14,14 @@ import {
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
-
+import {WSnackBar} from 'react-native-smart-tip';
+import {AndroidBackHandler} from 'react-navigation-backhandler';
 import config from '../../config';
 
 class LoginScreen extends Component {
+  onBackButtonPressAndroid = () => {
+    return true;
+  };
   state = {
     email: '',
     password: '',
@@ -45,96 +49,104 @@ class LoginScreen extends Component {
         AsyncStorage.setItem('user_id', res.data.success.user_id);
         this.props.navigation.navigate({routeName: 'Home'});
       })
-      .catch(err =>
-        Snackbar.show({
-          title: 'Invalid credentials!!!',
-          duration: Snackbar.LENGTH_SHORT,
-          backgroundColor: '#fff',
-          color: 'red',
-          action: {
-            title: 'Close',
-            color: 'green',
+      .catch(err => {
+        const snackBarOpts = {
+          data: 'Please check the credentials!',
+          position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+          duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+          textColor: '#ff490b',
+          backgroundColor: '#050405',
+          actionText: 'close',
+          actionTextColor: '#fff',
+          actionClick: () => {
+            // Click Action
           },
-        }),
-      );
+        };
+        WSnackBar.show(snackBarOpts);
+      });
   };
 
   render() {
     return (
-      <View style={styles.mainContainer}>
-        <ImageBackground
-          source={require('../assets/images/bg4.png')}
-          style={styles.bgStyle}>
-          <ScrollView>
-            <View style={styles.logoContainer}>
-              <Image
-                source={require('../assets/images/logo2.png')}
-                style={styles.logoStyle}
-              />
-            </View>
-            <View>
-              <View style={styles.formContainer}>
-                <Text style={styles.formText}>Welcome Back,</Text>
-                <Text style={styles.formTitle}> Login</Text>
+      <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+        <View style={styles.mainContainer}>
+          <ImageBackground
+            source={require('../assets/images/bg4.png')}
+            style={styles.bgStyle}>
+            <ScrollView>
+              <View style={styles.logoContainer}>
+                <Image
+                  source={require('../assets/images/logo2.png')}
+                  style={styles.logoStyle}
+                />
               </View>
-              <View style={styles.inputContainer}>
-                <Fumi
-                  label={'Email Address'}
-                  iconClass={FontAwesomeIcon}
-                  iconName={'envelope'}
-                  iconColor={'#f95a25'}
-                  iconSize={20}
-                  iconWidth={40}
-                  inputPadding={16}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  returnKeyType={'next'}
-                  style={styles.emailInput}
-                  onChangeText={val => this.onChangeText('email', val)}
-                />
-                <Fumi
-                  label={'Password'}
-                  iconClass={FontAwesomeIcon}
-                  iconName={'eye'}
-                  iconColor={'#f95a25'}
-                  iconSize={20}
-                  iconWidth={40}
-                  inputPadding={16}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  secureTextEntry
-                  style={styles.passwordInput}
-                  onChangeText={val => this.onChangeText('password', val)}
-                />
-                <View style={styles.btnContiners}>
-                  <TouchableOpacity
-                    style={styles.forgotPass}
-                    onPress={() =>
-                      this.props.navigation.navigate({routeName: 'Forgot'})
-                    }>
-                    <Text style={styles.forgotPassText}>Forgot Password?</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.submitBtn}
-                    onPress={this.Login}>
-                    <Text style={styles.loginText}>Login</Text>
-                  </TouchableOpacity>
+              <View>
+                <View style={styles.formContainer}>
+                  <Text style={styles.formText}>Welcome Back,</Text>
+                  <Text style={styles.formTitle}> Login</Text>
+                </View>
+                <View style={styles.inputContainer}>
+                  <Fumi
+                    label={'Email Address'}
+                    iconClass={FontAwesomeIcon}
+                    iconName={'envelope'}
+                    iconColor={'#f95a25'}
+                    iconSize={20}
+                    iconWidth={40}
+                    inputPadding={16}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    returnKeyType={'next'}
+                    style={styles.emailInput}
+                    onChangeText={val => this.onChangeText('email', val)}
+                  />
+                  <Fumi
+                    label={'Password'}
+                    iconClass={FontAwesomeIcon}
+                    iconName={'eye'}
+                    iconColor={'#f95a25'}
+                    iconSize={20}
+                    iconWidth={40}
+                    inputPadding={16}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry
+                    style={styles.passwordInput}
+                    onChangeText={val => this.onChangeText('password', val)}
+                  />
+
+                  <View style={styles.btnContiners}>
+                    <TouchableOpacity
+                      style={styles.forgotPass}
+                      onPress={() =>
+                        this.props.navigation.navigate({routeName: 'Forgot'})
+                      }>
+                      <Text style={styles.forgotPassText}>
+                        Forgot Password?
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.submitBtn}
+                      onPress={this.Login}>
+                      <Text style={styles.loginText}>Login</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
-            <View style={styles.bottmText}>
-              <Text style={styles.btmTxt}>Do not Have An account ?</Text>
-              <TouchableOpacity
-                style={styles.signUpButton}
-                onPress={() =>
-                  this.props.navigation.navigate({routeName: 'Register'})
-                }>
-                <Text style={styles.signupTxt}> Sign Up</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </ImageBackground>
-      </View>
+              <View style={styles.bottmText}>
+                <Text style={styles.btmTxt}>Do not Have An account ?</Text>
+                <TouchableOpacity
+                  style={styles.signUpButton}
+                  onPress={() =>
+                    this.props.navigation.navigate({routeName: 'Register'})
+                  }>
+                  <Text style={styles.signupTxt}> Sign Up</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </ImageBackground>
+        </View>
+      </AndroidBackHandler>
     );
   }
 }

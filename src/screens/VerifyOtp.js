@@ -1,3 +1,4 @@
+/* eslint-disable handle-callback-err */
 import React, {Component} from 'react';
 import {
   View,
@@ -8,11 +9,10 @@ import {
   AsyncStorage,
 } from 'react-native';
 import config from '../../config';
-
+import {WSnackBar} from 'react-native-smart-tip';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
 
 class VerifyOtp extends Component {
   state = {
@@ -23,17 +23,6 @@ class VerifyOtp extends Component {
   onChangeText = (key, val) => {
     this.setState({[key]: val});
   };
-
-  // UpdatePassword = async () => {
-  //   AsyncStorage.getItem('email').then(email => {
-  //     if (email) {
-  //       // this.setState({
-  //       //   emailId: email,
-  //       // });
-  //       console.log(email);
-  //     }
-  //   });
-  // };
 
   UpdatePassword = async () => {
     const {otp} = this.state;
@@ -49,30 +38,36 @@ class VerifyOtp extends Component {
         axios
           .post(`${config.API_URL}/verifyOtp`, verifyOtp)
           .then(res => {
-            Snackbar.show({
-              title: 'You otp verifed Successfully',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#fff',
-              color: 'orange',
-              action: {
-                title: 'Close',
-                color: 'green',
+            const snackBarOpts = {
+              data: 'Otp Verified Successfully',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {
+                // Click Action
               },
-            });
+            };
+            WSnackBar.show(snackBarOpts);
             this.props.navigation.navigate('Reset');
           })
-          .catch(err =>
-            Snackbar.show({
-              title: 'Something Went Wrong!',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#fff',
-              color: 'red',
-              action: {
-                title: 'Close',
-                color: 'green',
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Otp is not verified',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {
+                // Click Action
               },
-            }),
-          );
+            };
+            WSnackBar.show(snackBarOpts);
+          });
       }
     });
   };

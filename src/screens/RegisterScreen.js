@@ -11,11 +11,10 @@ import {
   AsyncStorage,
 } from 'react-native';
 import config from '../../config';
-
+import {WSnackBar} from 'react-native-smart-tip';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
 
 class RegisterScreen extends Component {
   state = {
@@ -49,18 +48,21 @@ class RegisterScreen extends Component {
         AsyncStorage.setItem('user_id', res.data.success.user_id);
         this.props.navigation.navigate({routeName: 'Home'});
       })
-      .catch(err =>
-        Snackbar.show({
-          title: 'Please enter Valid details.',
-          duration: Snackbar.LENGTH_SHORT,
-          backgroundColor: '#fff',
-          color: 'red',
-          action: {
-            title: 'Close',
-            color: 'green',
+      .catch(err => {
+        const snackBarOpts = {
+          data: 'Please check the network first.',
+          position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+          duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+          textColor: '#ff490b',
+          backgroundColor: '#050405',
+          actionText: 'close',
+          actionTextColor: 'white',
+          actionClick: () => {
+            // Click Action
           },
-        }),
-      );
+        };
+        WSnackBar.show(snackBarOpts);
+      });
   };
 
   render() {

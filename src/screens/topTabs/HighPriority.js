@@ -1,23 +1,31 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable handle-callback-err */
 import React, {Component} from 'react';
-import {View, StyleSheet, AsyncStorage, ScrollView} from 'react-native';
-
+import {
+  View,
+  StyleSheet,
+  AsyncStorage,
+  ScrollView,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import {WSnackBar} from 'react-native-smart-tip';
 import BookMark from '../../components/BookMark';
-
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
-
 import config from '../../../config';
+import PTRView from 'react-native-pull-to-refresh';
 
 class HighPriority extends Component {
   constructor(props) {
     super(props);
     this.state = {
       dataSource: [],
+      isLoading: true,
     };
   }
 
-  componentDidMount() {
+  refreshScreen = () => {
     const priorityId = {
       priority_id: 1,
     };
@@ -31,87 +39,134 @@ class HighPriority extends Component {
           })
           .then(res => {
             this.setState({
+              isLoading: false,
               dataSource: [...res.data.success],
             });
           })
-          .catch(err =>
-            Snackbar.show({
-              title: 'Something Went Wrong!',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#fff',
-              color: 'red',
-              action: {
-                title: 'Close',
-                color: 'green',
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Please check the network first.',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {
+                // Click Action
               },
-            }),
-          );
+            };
+            WSnackBar.show(snackBarOpts);
+          });
       }
     });
+  };
+
+  _refresh = () => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+  };
+
+  componentDidMount() {
+    this.refreshScreen();
   }
 
-  // state = {
-  //   bookmard_id: '',
-  // };
-  // deleteBookmark = async () => {
-  //   // alert(this.state.bookmard_id);
-  //   AsyncStorage.getItem('token').then(token => {
-  //     if (token) {
-  //       const bookmarkId = {
-  //         bookmard_id: this.state.bookmard_id,
-  //       };
-  //       axios
-  //         .post(`${config.API_URL}/deleteBookmark`, bookmarkId, {
-  //           headers: {
-  //             Authorization: 'Bearer ' + token,
-  //           },
-  //         })
-  //         .then(res => {
-  //           window.location.reload(false);
-  //         })
-  //         .catch(err =>
-  //           Snackbar.show({
-  //             title: 'Something Went Wrong!',
-  //             duration: Snackbar.LENGTH_SHORT,
-  //             backgroundColor: '#fff',
-  //             color: 'red',
-  //             action: {
-  //               title: 'Close',
-  //               color: 'green',
-  //             },
-  //           }),
-  //         );
-  //     }
-  //   });
-  // };
+  state = {
+    bookmarkId: '',
+  };
+
+  deleteBookmark = () => {
+    const bookmarkId = {
+      bookmark_id: this.state.bookmarkId,
+    };
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        axios
+          .post(`${config.API_URL}/deleteBookmark`, bookmarkId, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(res => {
+            const snackBarOpts = {
+              data: 'Bookmark is Deleted Successfully',
+              position: WSnackBar.position.TOP, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.INDEFINITE, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: this.refreshScreen,
+            };
+            WSnackBar.show(snackBarOpts);
+            console.log(res.data);
+          })
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Please check the network.',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+            };
+            WSnackBar.show(snackBarOpts);
+          });
+      }
+    });
+  };
   render() {
     const {dataSource} = this.state;
+    if (this.state.isLoading) {
+      return (
+        <PTRView onRefresh={this._refresh}>
+          <View
+            style={{
+              flex: 1,
+              padding: 20,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#fff',
+            }}>
+            <ActivityIndicator size={'large'} />
+            <Text>Loding...</Text>
+          </View>
+        </PTRView>
+      );
+    }
     return (
-      <ScrollView>
-        <View style={styles.mainContainer}>
-          {dataSource.map((data, i) => (
-            <BookMark
-              key={i}
-              title={data.department_name}
-              chapter_title={data.chapter_title}
-              pointer={data.pointers}
-              style={styles.chapterCardtext}
-              colorCode={data.color}
-              // alert(`${data.bookmard_id}`)
-              // onSelect={() => {
-              //   this.setState(
-              //     {
-              //       bookmard_id: `${data.bookmard_id}`,
-              //     },
-              //     () => {
-              //       this.deleteBookmark(data.bookmard_id);
-              //     },
-              //   );
-              // }}
-            />
-          ))}
-        </View>
-      </ScrollView>
+      <PTRView onRefresh={this._refresh}>
+        <ScrollView>
+          <View style={styles.mainContainer}>
+            {dataSource.map((data, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => {
+                  this.setState(
+                    {
+                      bookmarkId: `${data.bookmark_id}`,
+                    },
+                    () => {
+                      this.deleteBookmark(data.bookmark_id);
+                    },
+                  );
+                }}>
+                <BookMark
+                  title={data.department_name}
+                  chapter_title={data.chapter_title}
+                  pointer={data.pointers}
+                  style={styles.chapterCardtext}
+                  colorCode={data.color}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </PTRView>
     );
   }
 }
