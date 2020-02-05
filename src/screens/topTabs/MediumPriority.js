@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Text,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {WSnackBar} from 'react-native-smart-tip';
 import BookMark from '../../components/BookMark';
@@ -79,45 +80,62 @@ class MediumPriority extends Component {
   };
 
   deleteBookmark = () => {
-    const bookmarkId = {
-      bookmark_id: this.state.bookmarkId,
-    };
-    AsyncStorage.getItem('token').then(token => {
-      if (token) {
-        axios
-          .post(`${config.API_URL}/deleteBookmark`, bookmarkId, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-            },
-          })
-          .then(res => {
-            const snackBarOpts = {
-              data: 'Bookmark is Deleted Successfully',
-              position: WSnackBar.position.TOP, // 1.TOP 2.CENTER 3.BOTTOM
-              duration: WSnackBar.duration.INDEFINITE, //1.SHORT 2.LONG 3.INDEFINITE
-              textColor: '#ff490b',
-              backgroundColor: '#050405',
-              actionText: 'close',
-              actionTextColor: 'white',
-              actionClick: this.refreshScreen,
+    Alert.alert(
+      'Are You sure?',
+      'Once deleted it wont be available in your bookmark screen',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            const bookmarkId = {
+              bookmark_id: this.state.bookmarkId,
             };
-            WSnackBar.show(snackBarOpts);
-            console.log(res.data);
-          })
-          .catch(err => {
-            const snackBarOpts = {
-              data: 'Please check the network.',
-              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
-              textColor: '#ff490b',
-              backgroundColor: '#050405',
-              actionText: 'close',
-              actionTextColor: 'white',
-            };
-            WSnackBar.show(snackBarOpts);
-          });
-      }
-    });
+            AsyncStorage.getItem('token').then(token => {
+              if (token) {
+                axios
+                  .post(`${config.API_URL}/deleteBookmark`, bookmarkId, {
+                    headers: {
+                      Authorization: 'Bearer ' + token,
+                    },
+                  })
+                  .then(res => {
+                    const snackBarOpts = {
+                      data: 'Bookmark is Deleted Successfully',
+                      position: WSnackBar.position.TOP, // 1.TOP 2.CENTER 3.BOTTOM
+                      duration: WSnackBar.duration.INDEFINITE, //1.SHORT 2.LONG 3.INDEFINITE
+                      textColor: '#ff490b',
+                      backgroundColor: '#050405',
+                      actionText: 'close',
+                      actionTextColor: 'white',
+                      actionClick: this.refreshScreen,
+                    };
+                    WSnackBar.show(snackBarOpts);
+                    console.log(res.data);
+                  })
+                  .catch(err => {
+                    const snackBarOpts = {
+                      data: 'Please check the network.',
+                      position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                      duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                      textColor: '#ff490b',
+                      backgroundColor: '#050405',
+                      actionText: 'close',
+                      actionTextColor: 'white',
+                    };
+                    WSnackBar.show(snackBarOpts);
+                  });
+              }
+            });
+          },
+        },
+      ],
+      {cancelable: false},
+    );
   };
   render() {
     const {dataSource} = this.state;

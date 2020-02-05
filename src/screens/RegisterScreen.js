@@ -32,37 +32,78 @@ class RegisterScreen extends Component {
     const {email} = this.state;
     const {password} = this.state;
 
-    const userDetails = {
-      name: name,
-      email: email,
-      password: password,
-      c_password: password,
-    };
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-    axios
-      .post(`${config.API_URL}/register`, userDetails)
-      .then(res => {
-        AsyncStorage.setItem('token', res.data.success.token);
-        AsyncStorage.setItem('name', res.data.success.name);
-        AsyncStorage.setItem('email', res.data.success.email);
-        AsyncStorage.setItem('user_id', res.data.success.user_id);
-        this.props.navigation.navigate({routeName: 'Home'});
-      })
-      .catch(err => {
+    if (name) {
+      if (email && reg.test(email)) {
+        if (password) {
+          const userDetails = {
+            name: name,
+            email: email,
+            password: password,
+            c_password: password,
+          };
+          axios
+            .post(`${config.API_URL}/register`, userDetails)
+            .then(res => {
+              AsyncStorage.setItem('token', res.data.success.token);
+              AsyncStorage.setItem('name', res.data.success.name);
+              AsyncStorage.setItem('email', res.data.success.email);
+              AsyncStorage.setItem('user_id', res.data.success.user_id);
+              this.props.navigation.navigate({routeName: 'Home'});
+            })
+            .catch(err => {
+              const snackBarOpts = {
+                data: 'Email Already Taken',
+                position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                textColor: '#ff490b',
+                backgroundColor: '#050405',
+                actionText: 'close',
+                actionTextColor: 'white',
+                actionClick: () => {},
+              };
+              WSnackBar.show(snackBarOpts);
+            });
+        } else {
+          const snackBarOpts = {
+            data: 'Please enter Password',
+            position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+            duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+            textColor: '#ff490b',
+            backgroundColor: '#050405',
+            actionText: 'close',
+            actionTextColor: 'white',
+            actionClick: () => {},
+          };
+          WSnackBar.show(snackBarOpts);
+        }
+      } else {
         const snackBarOpts = {
-          data: 'Please check the network first.',
+          data: 'Please enter valid email.',
           position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
           duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
           textColor: '#ff490b',
           backgroundColor: '#050405',
           actionText: 'close',
           actionTextColor: 'white',
-          actionClick: () => {
-            // Click Action
-          },
+          actionClick: () => {},
         };
         WSnackBar.show(snackBarOpts);
-      });
+      }
+    } else {
+      const snackBarOpts = {
+        data: 'Please enter name.',
+        position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+        duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+        textColor: '#ff490b',
+        backgroundColor: '#050405',
+        actionText: 'close',
+        actionTextColor: 'white',
+        actionClick: () => {},
+      };
+      WSnackBar.show(snackBarOpts);
+    }
   };
 
   render() {

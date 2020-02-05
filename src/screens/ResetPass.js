@@ -27,49 +27,87 @@ class ChangePassword extends Component {
   UpdatePassword = async () => {
     const {new_password} = this.state;
     const {c_password} = this.state;
-    AsyncStorage.getItem('email').then(email => {
-      if (email) {
-        const ResetPass = {
-          email: email,
-          new_password: new_password,
-          c_password: c_password,
-        };
-        console.log(ResetPass);
-        axios
-          .post(`${config.API_URL}/resetPass`, ResetPass)
-          .then(res => {
-            const snackBarOpts = {
-              data: 'Password Updated Successfully',
-              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
-              textColor: 'green',
-              backgroundColor: '#050405',
-              actionText: 'close',
-              actionTextColor: 'white',
-              actionClick: () => {
-                // Click Action
-              },
-            };
-            WSnackBar.show(snackBarOpts);
-            this.props.navigation.navigate('Login');
-          })
-          .catch(err => {
-            const snackBarOpts = {
-              data: 'Please check the network first.',
-              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
-              textColor: '#ff490b',
-              backgroundColor: '#050405',
-              actionText: 'close',
-              actionTextColor: 'white',
-              actionClick: () => {
-                // Click Action
-              },
-            };
-            WSnackBar.show(snackBarOpts);
+    if (new_password) {
+      if (c_password) {
+        if (new_password === c_password) {
+          AsyncStorage.getItem('email').then(email => {
+            if (email) {
+              const ResetPass = {
+                email: email,
+                new_password: new_password,
+                c_password: c_password,
+              };
+              console.log(ResetPass);
+              axios
+                .post(`${config.API_URL}/resetPass`, ResetPass)
+                .then(res => {
+                  const snackBarOpts = {
+                    data: 'Password Updated Successfully',
+                    position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                    duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                    textColor: 'green',
+                    backgroundColor: '#050405',
+                    actionText: 'close',
+                    actionTextColor: 'white',
+                    actionClick: () => {},
+                  };
+                  WSnackBar.show(snackBarOpts);
+                  this.props.navigation.navigate('Login');
+                })
+                .catch(err => {
+                  const snackBarOpts = {
+                    data: 'Please check the network first.',
+                    position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                    duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                    textColor: '#ff490b',
+                    backgroundColor: '#050405',
+                    actionText: 'close',
+                    actionTextColor: 'white',
+                    actionClick: () => {},
+                  };
+                  WSnackBar.show(snackBarOpts);
+                });
+            }
           });
+        } else {
+          const snackBarOpts = {
+            data: 'New password and confirm password doesnot match',
+            position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+            duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+            textColor: '#ff490b',
+            backgroundColor: '#050405',
+            actionText: 'close',
+            actionTextColor: 'white',
+            actionClick: () => {},
+          };
+          WSnackBar.show(snackBarOpts);
+        }
+      } else {
+        const snackBarOpts = {
+          data: 'confirm password should not be empty',
+          position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+          duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+          textColor: '#ff490b',
+          backgroundColor: '#050405',
+          actionText: 'close',
+          actionTextColor: 'white',
+          actionClick: () => {},
+        };
+        WSnackBar.show(snackBarOpts);
       }
-    });
+    } else {
+      const snackBarOpts = {
+        data: 'Password should not be empty',
+        position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+        duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+        textColor: '#ff490b',
+        backgroundColor: '#050405',
+        actionText: 'close',
+        actionTextColor: 'white',
+        actionClick: () => {},
+      };
+      WSnackBar.show(snackBarOpts);
+    }
   };
   render() {
     return (

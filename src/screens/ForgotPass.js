@@ -25,30 +25,44 @@ class ForgotPass extends Component {
 
   UpdatePassword = async () => {
     const {email} = this.state;
-    const forgotPass = {
-      email: email,
-    };
-    axios
-      .post(`${config.API_URL}/forgotPass`, forgotPass)
-      .then(res => {
-        AsyncStorage.setItem('email', this.state.email);
-        this.props.navigation.navigate('Verify');
-      })
-      .catch(err => {
-        const snackBarOpts = {
-          data: 'Please check the network first.',
-          position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-          duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
-          textColor: '#ff490b',
-          backgroundColor: '#050405',
-          actionText: 'close',
-          actionTextColor: 'white',
-          actionClick: () => {
-            // Click Action
-          },
-        };
-        WSnackBar.show(snackBarOpts);
-      });
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    if (email && reg.test(email)) {
+      const forgotPass = {
+        email: email,
+      };
+      axios
+        .post(`${config.API_URL}/forgotPass`, forgotPass)
+        .then(res => {
+          AsyncStorage.setItem('email', this.state.email);
+          this.props.navigation.navigate('Verify');
+        })
+        .catch(err => {
+          const snackBarOpts = {
+            data: 'The email does not exits',
+            position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+            duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+            textColor: '#ff490b',
+            backgroundColor: '#050405',
+            actionText: 'close',
+            actionTextColor: 'white',
+            actionClick: () => {},
+          };
+          WSnackBar.show(snackBarOpts);
+        });
+    } else {
+      const snackBarOpts = {
+        data: 'Please enter Valid email.',
+        position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+        duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+        textColor: '#ff490b',
+        backgroundColor: '#050405',
+        actionText: 'close',
+        actionTextColor: 'white',
+        actionClick: () => {},
+      };
+      WSnackBar.show(snackBarOpts);
+    }
   };
   render() {
     return (

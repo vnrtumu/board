@@ -26,50 +26,60 @@ class VerifyOtp extends Component {
 
   UpdatePassword = async () => {
     const {otp} = this.state;
-    AsyncStorage.getItem('email').then(email => {
-      if (email) {
-        this.setState({
-          emailId: email,
-        });
-        const verifyOtp = {
-          email: email,
-          otp: otp,
-        };
-        axios
-          .post(`${config.API_URL}/verifyOtp`, verifyOtp)
-          .then(res => {
-            const snackBarOpts = {
-              data: 'Otp Verified Successfully',
-              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
-              textColor: '#ff490b',
-              backgroundColor: '#050405',
-              actionText: 'close',
-              actionTextColor: 'white',
-              actionClick: () => {
-                // Click Action
-              },
-            };
-            WSnackBar.show(snackBarOpts);
-            this.props.navigation.navigate('Reset');
-          })
-          .catch(err => {
-            const snackBarOpts = {
-              data: 'Otp is not verified',
-              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
-              textColor: '#ff490b',
-              backgroundColor: '#050405',
-              actionText: 'close',
-              actionTextColor: 'white',
-              actionClick: () => {
-                // Click Action
-              },
-            };
-            WSnackBar.show(snackBarOpts);
+    if (otp) {
+      AsyncStorage.getItem('email').then(email => {
+        if (email) {
+          this.setState({
+            emailId: email,
           });
-      }
-    });
+          const verifyOtp = {
+            email: email,
+            otp: otp,
+          };
+          axios
+            .post(`${config.API_URL}/verifyOtp`, verifyOtp)
+            .then(res => {
+              const snackBarOpts = {
+                data: 'Otp Verified Successfully',
+                position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                textColor: '#ff490b',
+                backgroundColor: '#050405',
+                actionText: 'close',
+                actionTextColor: 'white',
+                actionClick: () => {},
+              };
+              WSnackBar.show(snackBarOpts);
+              this.props.navigation.navigate('Reset');
+            })
+            .catch(err => {
+              const snackBarOpts = {
+                data: 'Otp is not Valid',
+                position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                textColor: '#ff490b',
+                backgroundColor: '#050405',
+                actionText: 'close',
+                actionTextColor: 'white',
+                actionClick: () => {},
+              };
+              WSnackBar.show(snackBarOpts);
+            });
+        }
+      });
+    } else {
+      const snackBarOpts = {
+        data: 'Otp field Should not be empty',
+        position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+        duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+        textColor: '#ff490b',
+        backgroundColor: '#050405',
+        actionText: 'close',
+        actionTextColor: 'white',
+        actionClick: () => {},
+      };
+      WSnackBar.show(snackBarOpts);
+    }
   };
   render() {
     return (

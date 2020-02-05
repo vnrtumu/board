@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import HTML from 'react-native-render-html';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -16,14 +10,12 @@ const BookMark = props => {
         <Text style={{...styles.cardTextStyle, color: props.colorCode}}>
           {props.title}
         </Text>
-        <TouchableOpacity onPress={props.onSelect}>
-          <FontAwesome
-            name="trash-o"
-            size={30}
-            color="#C223CE"
-            style={styles.iconStyle}
-          />
-        </TouchableOpacity>
+        <FontAwesome
+          name="trash-o"
+          size={30}
+          color="#C223CE"
+          style={styles.iconStyle}
+        />
       </View>
       <Text style={styles.chapterStyle}> {props.chapter_title} </Text>
       <HTML

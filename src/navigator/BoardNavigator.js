@@ -9,13 +9,10 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import HomeScreen from '../screens/HomeScreen';
 import ChaptersScreen from '../screens/ChaptersScreen';
 import PointersScreen from '../screens/PointersScreen';
-import ProfileScreen from '../screens/ProfileScreen';
 
 import LowPriority from '../screens/topTabs/LowProirity';
 import HighPriority from '../screens/topTabs/HighPriority';
 import MediumPriority from '../screens/topTabs/MediumPriority';
-import FeedBackScreen from '../screens/FeedBackScreen';
-import ChangePassword from '../screens/ChangePassword';
 
 import ProfileNavigator from './ProfileNavigator';
 

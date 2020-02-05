@@ -15,6 +15,7 @@ import {WSnackBar} from 'react-native-smart-tip';
 import CardOptions from '../components/CardOptions';
 import Icon from 'react-native-vector-icons/Fontisto';
 import ImagePicker from 'react-native-image-picker';
+import {NavigationEvents} from 'react-navigation';
 
 import axios from 'axios';
 import config from '../../config';
@@ -163,6 +164,7 @@ export default class ProfileScreen extends Component {
       <ScrollView
         style={styles.mainContainer}
         showsVerticalScrollIndicator={false}>
+        <NavigationEvents onDidFocus={() => this.componentDidMount()} />
         <View style={styles.prrileContainer}>
           <View style={styles.photoContainer}>
             {this.state.ImageSource === null ? (

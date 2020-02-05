@@ -34,36 +34,62 @@ class LoginScreen extends Component {
   Login = async () => {
     const {email} = this.state;
     const {password} = this.state;
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-    const loginDetails = {
-      email: email,
-      password: password,
-    };
-
-    axios
-      .post(`${config.API_URL}/login`, loginDetails)
-      .then(res => {
-        AsyncStorage.setItem('token', res.data.success.token);
-        AsyncStorage.setItem('name', res.data.success.name);
-        AsyncStorage.setItem('email', res.data.success.email);
-        AsyncStorage.setItem('user_id', res.data.success.user_id);
-        this.props.navigation.navigate({routeName: 'Home'});
-      })
-      .catch(err => {
+    if (email && reg.test(email)) {
+      if (password) {
+        const loginDetails = {
+          email: email,
+          password: password,
+        };
+        axios
+          .post(`${config.API_URL}/login`, loginDetails)
+          .then(res => {
+            AsyncStorage.setItem('token', res.data.success.token);
+            AsyncStorage.setItem('name', res.data.success.name);
+            AsyncStorage.setItem('email', res.data.success.email);
+            AsyncStorage.setItem('user_id', res.data.success.user_id);
+            this.props.navigation.navigate({routeName: 'Home'});
+          })
+          .catch(err => {
+            const snackBarOpts = {
+              data: 'Please check the credentials!',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: '#fff',
+              actionClick: () => {},
+            };
+            WSnackBar.show(snackBarOpts);
+          });
+      } else {
         const snackBarOpts = {
-          data: 'Please check the credentials!',
+          data: 'Please enter password',
           position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
           duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
           textColor: '#ff490b',
           backgroundColor: '#050405',
           actionText: 'close',
           actionTextColor: '#fff',
-          actionClick: () => {
-            // Click Action
-          },
+          actionClick: () => {},
         };
         WSnackBar.show(snackBarOpts);
-      });
+      }
+    } else {
+      const snackBarOpts = {
+        data: 'Please enter valid Email Address.',
+        position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+        duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+        textColor: '#ff490b',
+        backgroundColor: '#050405',
+        actionText: 'close',
+        actionTextColor: '#fff',
+        actionClick: () => {},
+      };
+      WSnackBar.show(snackBarOpts);
+    }
   };
 
   render() {
