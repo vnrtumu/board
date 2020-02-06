@@ -79,7 +79,7 @@ class ChangePassword extends Component {
             });
           } else {
             const snackBarOpts = {
-              data: 'New password and confirm Password Should match',
+              data: 'New and confirm Pass Should match',
               position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
               duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
               textColor: '#ff490b',

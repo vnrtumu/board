@@ -27,7 +27,7 @@ class LowPriority extends Component {
   }
   refreshScreen = () => {
     const priorityId = {
-      priority_id: 2,
+      priority_id: 3,
     };
     AsyncStorage.getItem('token').then(token => {
       if (token) {

@@ -37,7 +37,7 @@ class MediumPriority extends Component {
 
   refreshScreen = () => {
     const priorityId = {
-      priority_id: 3,
+      priority_id: 2,
     };
     AsyncStorage.getItem('token').then(token => {
       if (token) {
