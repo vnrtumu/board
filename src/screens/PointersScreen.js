@@ -69,9 +69,7 @@ export default class PointersScreen extends Component {
               backgroundColor: '#050405',
               actionText: 'close',
               actionTextColor: 'white',
-              actionClick: () => {
-                // Click Action
-              },
+              actionClick: () => {},
             };
             WSnackBar.show(snackBarOpts);
           });
@@ -158,9 +156,7 @@ export default class PointersScreen extends Component {
               backgroundColor: '#050405',
               actionText: 'close',
               actionTextColor: 'white',
-              actionClick: () => {
-                // this.reload();
-              },
+              actionClick: () => {},
             };
             WSnackBar.show(snackBarOpts);
           });
@@ -221,12 +217,26 @@ export default class PointersScreen extends Component {
                 );
               } else {
                 return (
-                  <View style={styles.pointerStyle} key={i}>
-                    <Pointers
-                      description={data.pointer}
-                      style={{backgroundColor: `${data.color}`}}
-                    />
-                  </View>
+                  <TouchableOpacity
+                    key={i}
+                    swipeDirection={'left'}
+                    onPress={() => {
+                      this.setState(
+                        {
+                          pointer_id: `${data.pointer_id}`,
+                        },
+                        () => {
+                          this.openModel(data.pointer_id);
+                        },
+                      );
+                    }}>
+                    <View style={styles.pointerStyle} key={i}>
+                      <Pointers
+                        description={data.pointer}
+                        style={{backgroundColor: `${data.color}`}}
+                      />
+                    </View>
+                  </TouchableOpacity>
                 );
               }
             })}

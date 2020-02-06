@@ -44,16 +44,17 @@ class ChangePassword extends Component {
           })
           .then(res => {
             AsyncStorage.removeItem('token');
-            Snackbar.show({
-              title: 'You Password Updated Successfully',
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: '#fff',
-              color: 'orange',
-              action: {
-                title: 'Close',
-                color: 'green',
-              },
-            });
+            const snackBarOpts = {
+              data: 'You Password Updated Successfully',
+              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+              textColor: '#ff490b',
+              backgroundColor: '#050405',
+              actionText: 'close',
+              actionTextColor: 'white',
+              actionClick: () => {},
+            };
+            WSnackBar.show(snackBarOpts);
             this.props.navigation.navigate('Login');
           })
           .catch(err => {
@@ -65,9 +66,7 @@ class ChangePassword extends Component {
               backgroundColor: '#050405',
               actionText: 'close',
               actionTextColor: 'white',
-              actionClick: () => {
-                // Click Action
-              },
+              actionClick: () => {},
             };
             WSnackBar.show(snackBarOpts);
           });

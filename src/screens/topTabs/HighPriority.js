@@ -116,7 +116,6 @@ class HighPriority extends Component {
                       actionClick: this.refreshScreen,
                     };
                     WSnackBar.show(snackBarOpts);
-                    console.log(res.data);
                   })
                   .catch(err => {
                     const snackBarOpts = {

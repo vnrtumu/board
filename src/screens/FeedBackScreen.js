@@ -68,9 +68,7 @@ class FeedBackScreen extends Component {
               backgroundColor: '#050405',
               actionText: 'close',
               actionTextColor: 'white',
-              actionClick: () => {
-                // Click Action
-              },
+              actionClick: () => {},
             };
             WSnackBar.show(snackBarOpts);
           });
