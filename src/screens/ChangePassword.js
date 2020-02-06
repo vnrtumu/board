@@ -29,23 +29,57 @@ class ChangePassword extends Component {
     const {current_password} = this.state;
     const {new_password} = this.state;
     const {c_password} = this.state;
-    const ChangePass = {
-      current_password: current_password,
-      new_password: new_password,
-      c_password: c_password,
-    };
-    AsyncStorage.getItem('token').then(token => {
-      if (token) {
-        axios
-          .post(`${config.API_URL}/changePassword`, ChangePass, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-            },
-          })
-          .then(res => {
-            AsyncStorage.removeItem('token');
+
+    if (current_password) {
+      if (new_password) {
+        if (c_password) {
+          if (new_password === c_password) {
+            const ChangePass = {
+              current_password: current_password,
+              new_password: new_password,
+              c_password: c_password,
+            };
+            AsyncStorage.getItem('token').then(token => {
+              if (token) {
+                axios
+                  .post(`${config.API_URL}/changePassword`, ChangePass, {
+                    headers: {
+                      Authorization: 'Bearer ' + token,
+                    },
+                  })
+                  .then(res => {
+                    AsyncStorage.removeItem('token');
+                    const snackBarOpts = {
+                      data: 'You Password Updated Successfully',
+                      position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                      duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                      textColor: '#ff490b',
+                      backgroundColor: '#050405',
+                      actionText: 'close',
+                      actionTextColor: 'white',
+                      actionClick: () => {},
+                    };
+                    WSnackBar.show(snackBarOpts);
+                    this.props.navigation.navigate('Login');
+                  })
+                  .catch(err => {
+                    const snackBarOpts = {
+                      data: 'Please check the network first.',
+                      position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+                      duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+                      textColor: '#ff490b',
+                      backgroundColor: '#050405',
+                      actionText: 'close',
+                      actionTextColor: 'white',
+                      actionClick: () => {},
+                    };
+                    WSnackBar.show(snackBarOpts);
+                  });
+              }
+            });
+          } else {
             const snackBarOpts = {
-              data: 'You Password Updated Successfully',
+              data: 'New password and confirm Password Should match',
               position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
               duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
               textColor: '#ff490b',
@@ -55,23 +89,46 @@ class ChangePassword extends Component {
               actionClick: () => {},
             };
             WSnackBar.show(snackBarOpts);
-            this.props.navigation.navigate('Login');
-          })
-          .catch(err => {
-            const snackBarOpts = {
-              data: 'Please check the network first.',
-              position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-              duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
-              textColor: '#ff490b',
-              backgroundColor: '#050405',
-              actionText: 'close',
-              actionTextColor: 'white',
-              actionClick: () => {},
-            };
-            WSnackBar.show(snackBarOpts);
-          });
+          }
+        } else {
+          const snackBarOpts = {
+            data: 'confirm Password Should not be Empty',
+            position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+            duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+            textColor: '#ff490b',
+            backgroundColor: '#050405',
+            actionText: 'close',
+            actionTextColor: 'white',
+            actionClick: () => {},
+          };
+          WSnackBar.show(snackBarOpts);
+        }
+      } else {
+        const snackBarOpts = {
+          data: 'New Password Should not be Empty',
+          position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+          duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+          textColor: '#ff490b',
+          backgroundColor: '#050405',
+          actionText: 'close',
+          actionTextColor: 'white',
+          actionClick: () => {},
+        };
+        WSnackBar.show(snackBarOpts);
       }
-    });
+    } else {
+      const snackBarOpts = {
+        data: 'Current Password Should not be Empty',
+        position: WSnackBar.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+        duration: WSnackBar.duration.LONG, //1.SHORT 2.LONG 3.INDEFINITE
+        textColor: '#ff490b',
+        backgroundColor: '#050405',
+        actionText: 'close',
+        actionTextColor: 'white',
+        actionClick: () => {},
+      };
+      WSnackBar.show(snackBarOpts);
+    }
   };
   render() {
     return (
