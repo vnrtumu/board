@@ -174,7 +174,7 @@ class LowPriority extends Component {
                 <BookMark
                   title={data.department_name}
                   chapter_title={data.chapter_title}
-                  pointer={data.pointers}
+                  pointer={data.api_pointer}
                   style={styles.chapterCardtext}
                   colorCode={data.color}
                 />
